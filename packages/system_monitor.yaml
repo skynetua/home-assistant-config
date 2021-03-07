@@ -1,0 +1,34 @@
+sensor:
+  # General
+  - platform: time_date
+    display_options:
+      - "date_time"
+
+  # HA Usage
+  - platform: systemmonitor
+    resources:
+      - type: processor_use
+      - type: disk_use_percent
+        arg: /
+      - type: memory_use_percent
+      - type: last_boot
+      - type: disk_free
+        arg: /
+
+  # Nuc
+  - platform: rest
+    value_template: "{{ value_json }}"
+    resource: http://192.168.88.200:61208/api/3/uptime
+    name: Nuc Uptime
+    scan_interval: 600
+
+    # Network
+  - platform: dnsip
+    name: publicip
+
+binary_sensor:
+  - platform: ping
+    host: 8.8.8.8
+    name: "Internet Connection"
+    count: 2
+    scan_interval: 60

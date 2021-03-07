@@ -1,0 +1,160 @@
+substitutions:
+  device_name: rf_bridge
+  light_toggle_code: '0xc34401'
+  light_25_proc: '0xc34409'
+  light_50_proc: '0xc34408'
+  light_100_proc: '0xc34407'
+
+esphome:
+  name: ${device_name}
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  manual_ip:
+    static_ip: 192.168.88.192
+    gateway: 192.168.88.1
+    subnet: 255.255.255.0
+  ap:
+    ssid: ${device_name}_hotspot
+    password: !secret esp_pass
+
+web_server:
+  port: 80
+
+logger:
+  baud_rate: 0
+
+api:
+  password: !secret esp_pass
+  services:
+  - service: send_rf_code
+    variables:
+      sync: int
+      low: int
+      high: int
+      code: int
+    then:
+      - rf_bridge.send_code:
+          sync: !lambda 'return sync;'
+          low: !lambda 'return low;'
+          high: !lambda 'return high;'
+          code: !lambda 'return code;'
+
+ota:
+  password: !secret esp_pass
+  
+uart:
+  tx_pin: 1
+  rx_pin: 3
+  baud_rate: 19200
+  
+rf_bridge:
+  on_code_received:
+    then:
+      - homeassistant.event:
+          event: esphome.rf_code_received
+          data:
+            sync: !lambda 'char buffer [10];return itoa(data.sync,buffer,16);'
+            low: !lambda 'char buffer [10];return itoa(data.low,buffer,16);'
+            high: !lambda 'char buffer [10];return itoa(data.high,buffer,16);'
+            code: !lambda 'char buffer [10];return itoa(data.code,buffer,16);'
+      - globals.set:
+          id: rf_code_received
+          value: !lambda 'return data.code;'
+      - script.execute: sync_light_state
+
+globals:
+  - id: is_rf_code_received
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: rf_code_received
+    type: int #std::string
+    restore_value: no
+    initial_value: '0'
+  - id: command_code
+    type: int
+    restore_value: no
+    initial_value: '0'
+
+script:
+  - id: set_remote_state
+    mode: restart
+    then:
+      - globals.set:
+          id: is_rf_code_received
+          value: 'true'
+      - delay: 2s
+      - globals.set:
+          id: is_rf_code_received
+          value: 'false'
+
+  - id: sync_light_state
+    mode: restart
+    then:
+#      - script.execute: set_remote_state
+      - if:
+          condition:
+            lambda: return (id(rf_code_received) == '0xc34401');
+          then:
+            light.toggle: bedroom_leds
+          else:
+            - logger.log: "Not equals"
+
+
+  - id: send_light_command
+    then:
+      if:
+        condition:
+          lambda: return (id(is_rf_code_received) == false);
+        then:
+          - rf_bridge.send_code:
+              sync: 0x2f3a
+              low: 0x1b8
+              high: 0x4c4
+              code: !lambda "return id(command_code);"
+
+light:
+  - platform: monochromatic
+    id: bedroom_leds
+    name: "Bedroom LEDS"
+    default_transition_length: 0s
+    output: output_light_1
+    
+output:
+  - platform: template
+    id: output_light_1
+    type: float 
+    write_action:
+      - if:
+          condition:
+            lambda: return ((state == 0));
+          then:
+            - globals.set:
+                id: command_code
+                value: ${light_toggle_code}
+      - if:
+          condition:
+            lambda: return ((state > 0) && (state < .25));
+          then:
+            - globals.set:
+                id: command_code
+                value: ${light_25_proc}
+      - if:
+          condition:
+            lambda: return ((state > .25) && (state < .5));
+          then:
+            - globals.set:
+                id: command_code
+                value: ${light_50_proc}
+      - if:
+          condition:
+            lambda: return ((state > .5) && (state <= 1));
+          then:
+            - globals.set:
+                id: command_code
+                value: ${light_100_proc}
+      - script.execute: send_light_command

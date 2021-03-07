@@ -1,0 +1,11 @@
+mikrotik_nat_rules:
+  - switch.mikrotik_nat_tcp_443
+  - switch.mikrotik_nat_tcp_80
+  - switch.mikrotik_nat_upnp_192_168_88_200_plex_media_server
+living_room_light:
+  name: Living Room light
+  entities:
+    - light.wled
+    - light.corridor
+    - light.kitchen
+    - swicth.ac_panel_light

@@ -1,0 +1,45 @@
+switch:
+  - platform: template
+    switches:
+      pc:
+        value_template: "{{ is_state('switch.home_pc_wol', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.livingroom_plug
+        turn_off:
+          service: >-
+            {% if is_state('switch.pc', 'on') %}
+              shell_command.turn_off_pc
+            {% endif %}
+        friendly_name: Компьютер
+        unique_id: home_livingroom_pc
+  - platform: wake_on_lan
+    name: home-pc-wol
+    mac: !secret pc_mac
+    host: !secret pc_ip
+  - platform: wake_on_lan
+    name: work-pc
+    mac: !secret work_pc_mac
+    host: !secret work_pc_ip
+    turn_off:
+      service: >-
+        {% if is_state('switch.work_pc', 'on') %}
+          shell_command.turn_off_pcu
+        {% endif %}
+
+shell_command:
+  turn_off_pcu: ssh -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no hass@192.168.88.221 sudo poweroff
+  turn_off_pc: ssh -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no hass@192.168.88.220 shutdown /s
+#If you are using the state of a platform that takes extra time to load, the Template Switch may get an unknown state during startup. This results in error messages in your log file until that platform has completed loading. If you use is_state() function in your template, you can avoid this situation. For example, you would replace {{ states.switch.source.state == 'on') }} with this equivalent that returns true/false and never gives an unknown result: {{ is_state('switch.source', 'on') }}
+
+media_player:
+  - platform: samsungtv_encrypted
+    name: samsung tv
+    host: 192.168.88.203
+    token: a42b9e8bb3cf230e0a1b52a5fab444a9
+    sessionid: 1
+    port: 8080
+  - platform: dlna_dmr
+    url: http://192.168.88.203:7676/smp_63_
+    name: Samsung TV DMR

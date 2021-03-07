@@ -1,0 +1,21 @@
+tts:
+  - platform: google_translate
+    service_name: google_say
+    base_url: http://192.168.88.210:8123
+    language: en
+
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_api_key
+    parse_mode: html
+    allowed_chat_ids:
+      - !secret telegram_chat_id
+
+notify:
+  - name: telegram
+    platform: telegram
+    chat_id: !secret telegram_chat_id
+  - platform: tts
+    name: tts_living_room
+    tts_service: tts.google_say
+    media_player: media_player.gostinaia

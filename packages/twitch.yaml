@@ -1,0 +1,27 @@
+sensor:
+  - platform: twitch
+    entity_namespace: twitch
+    client_id: !secret twitch_client_id
+    token: !secret twitch_token
+    channels:
+      - guit88man
+      - cahchec
+      - UncleBjorn
+      - SilverName
+    scan_interval: 60
+
+script:
+  cast_twitch_stream:
+    alias: Cast twitch stream
+    description: "Cast twitch stream to defined chromecast device"
+    fields:
+      stream:
+        description: "The sensor tracking stream status"
+    sequence:
+      - service: media_extractor.play_media
+        data:
+          entity_id: media_player.kd_55xf8505
+          media_content_id: "https://twitch.tv/ {{ stream }}"
+          media_content_type: video
+    mode: single
+    icon: "mdi:twitch"

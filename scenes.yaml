@@ -1,0 +1,29 @@
+- id: "1594989640535"
+  name: Sleep
+  icon: mdi:sleep
+  entities:
+    media_player.sony_bravia_tv:
+      state: "off"
+    light.wled:
+      state: "off"
+    switch.pc:
+      state: "off"
+    switch.work_pc:
+      state: "off"
+- id: "1611782046067"
+  name: Away
+  icon: mdi:power
+  entities:
+    media_player.googlehome3251:
+      state: "off"
+    media_player.sony_bravia_tv:
+      state: "off"
+    light.wled:
+      state: "off"
+    switch.pc:
+      state: "off"
+    light.toilet:
+      state: "off"
+    light.cabinet:
+      state: "off"
+

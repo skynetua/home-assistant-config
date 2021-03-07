@@ -1,0 +1,190 @@
+esphome:
+  name: kitchen_hood
+  platform: ESP8266
+  board: nodemcuv2
+
+wifi:
+  ssid: "MikroTik-2.4GHz"
+  password: "AllKas1987"
+  
+#  manual_ip:
+#    static_ip: 192.168.88.193
+#    gateway: 192.168.88.1
+#    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Nodemcu Led Fallback Hotspot"
+    password: "P9JkReflQ7St"
+
+captive_portal:
+logger:
+api:
+ota:
+
+binary_sensor:
+  - platform: gpio
+    id: key1
+    pin:
+      number: D5
+      inverted: True
+      mode: INPUT_PULLUP
+    name: "Kitchen Hood Speed 1 key"
+    filters:
+      - delayed_on: 10ms
+    on_press:
+      then:
+        - fan.turn_on:
+            id: fan1
+            speed: LOW
+    on_release:
+      then:
+        - script.execute: sync
+  - platform: gpio
+    id: key2
+    pin:
+      number: D6
+      inverted: True
+      mode: INPUT_PULLUP
+    name: "Kitchen Hood Speed 2 key"
+    filters:
+      - delayed_on: 10ms
+    on_press:
+      then:
+        - fan.turn_on:
+            id: fan1
+            speed: MEDIUM
+    on_release:
+      then:
+        - script.execute: sync
+  - platform: gpio
+    id: key3
+    pin:
+      number: D7
+      inverted: True
+      mode: INPUT_PULLUP
+    name: "Kitchen Hood Speed 3 key"
+    filters:
+      - delayed_on: 10ms
+    on_press:
+      then:
+        - fan.turn_on:
+            id: fan1
+            speed: HIGH
+    on_release:
+      then:
+        - script.execute: sync            
+  - platform: gpio
+    id: key4
+    pin:
+      number: D1
+      inverted: True
+      mode: INPUT_PULLUP
+    name: "Kitchen Hood Light key"
+    filters:
+      - delayed_on: 10ms
+    on_press:
+      then:
+        - light.turn_on: light1
+    on_release:
+      then:
+        - light.turn_off: light1
+
+switch:
+  - platform: gpio
+    name: Fan low
+    icon: mdi:fan-speed-1
+    pin: D2
+    id: relay1
+    interlock: &interlock_group [relay1, relay2, relay3]
+    interlock_wait_time: 300ms
+
+  - platform: gpio
+    name: Fan medium
+    icon: mdi:fan-speed-2
+    id: relay2
+    pin: D3
+    interlock: *interlock_group
+    interlock_wait_time: 300ms
+
+  - platform: gpio
+    name: Fan high
+    icon: mdi:fan-speed-3
+    pin: D4
+    id: relay3
+    interlock: *interlock_group
+    interlock_wait_time: 300ms
+    
+sensor:
+  - platform: dht
+    model: DHT11
+    pin: D0
+    temperature:
+      name: "Hood Temperature"
+    humidity:
+      name: "Hood Humidity"
+    update_interval: 120s
+
+light:
+  - platform: binary
+    id: light1
+    name: "Kitchen Hood Light"
+    output: light_output
+    
+fan:
+  - platform: speed
+    id: fan1
+    output: fan_output
+    name: "Kitchen Hood Fan"
+    
+output:
+  - platform: template
+    id: fan_output
+    type: float 
+    write_action:
+      - if:
+          condition:
+            lambda: return ((state == 0));
+          then:
+            # action for off
+            - switch.turn_off: relay1
+            - switch.turn_off: relay2
+            - switch.turn_off: relay3
+      - if:
+          condition:
+            lambda: return ((state > 0) && (state < .34));
+          then:
+            # action for low
+            - switch.turn_on: relay1
+      - if:
+          condition:
+            lambda: return ((state > .34) && (state < .7));
+          then:
+           # action for medium
+            - switch.turn_on: relay2
+      - if:
+          condition:
+            lambda: return ((state == 1));
+          then:
+            # action for high
+            - switch.turn_on: relay3
+  - platform: gpio
+    id: light_output
+    pin: D8
+    
+script:
+  - id: sync
+    mode: restart
+    then: 
+      - logger.log: "Script Triggered"
+      - if:
+          condition: 
+            and: 
+              - binary_sensor.is_off: key1
+              - binary_sensor.is_off: key2
+              - binary_sensor.is_off: key3
+          then:
+            - logger.log: "Conditions met"
+            - fan.turn_off: fan1
+          else:
+            - logger.log: "Cond not met"

@@ -1,0 +1,90 @@
+esphome:
+  name: nodemcu_multisensor
+  platform: ESP8266
+  board: nodemcuv2
+
+wifi:
+  ssid: "MikroTik-2.4GHz"
+  password: "AllKas1987"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Multisensor Fallback Hotspot"
+    password: "O7c3MYWB0L3g"
+
+captive_portal:
+
+
+web_server:
+  port: 80
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+sensor:
+  - platform: bme280
+    temperature:
+      name: "BME280 Temperature"
+      filters:
+        - calibrate_linear:
+          # Map 0.0 (from sensor) to 0.0 (true value)
+          - 15.1 -> 16.3
+          - 21.5 -> 22.4
+    pressure:
+      name: "BME280 Pressure"
+    humidity:
+      name: "BME280 Humidity"
+      filters:
+        - calibrate_linear:
+          # Map 0.0 (from sensor) to 0.0 (true value)
+          - 22 -> 28
+          - 25 -> 30
+    address: 0x76
+    i2c_id: bus_a
+    update_interval: 60s
+    
+
+  - platform: dht
+    model: DHT11
+    pin: D7
+    temperature:
+      name: "Outdoor Temperature"
+      filters:
+        - calibrate_linear:
+           - 16.4 -> 16
+           - 22.9 -> 22.5
+    humidity:
+      name: "Outdoor Humidity"
+#      filters:
+#        - calibrate_linear:
+#          # Map 0.0 (from sensor) to 0.0 (true value)
+#          - 15.2 -> 15
+#          - 22.9 -> 22.4
+    update_interval: 60s
+
+i2c:
+ - id: bus_a
+   sda: 4             #D2
+   scl: 5             #D1
+   scan: True
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D6
+      inverted: True
+    name: "Light"
+    device_class: light
+    
+light:
+  - platform: fastled_clockless
+    chipset: WS2812B
+    pin: D8
+    num_leds: 41
+    rgb_order: GRB
+    name: "Cabinet LEDS"

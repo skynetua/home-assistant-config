@@ -1,0 +1,23 @@
+sensor:
+  - platform: radarr_upcoming_media
+    api_key: !secret radarr_api
+    host: !secret host_ip
+    port: 7878
+    days: 14
+    ssl: false
+    theaters: false
+    max: 10
+  - platform: plex_recently_added
+    name: Recently Added Movies # will create sensor.recently_added_movies
+    token: !secret plex_token
+    host: !secret host_ip
+    port: 32400
+    section_types:
+      - movie
+  - platform: plex_recently_added
+    name: Recently Added TV # will create sensor.recently_added_tv
+    token: !secret plex_token
+    host: !secret host_ip
+    port: 32400
+    section_types:
+      - show

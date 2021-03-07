@@ -1,0 +1,60 @@
+# Calendar
+#google:
+#  client_id: !secret google_client_id
+#  client_secret: !secret google_secret
+
+# Google Assistant
+google_assistant:
+  project_id: !secret google_project_id
+  service_account: !include google.json
+  report_state: true
+  exposed_domains:
+    - light
+  entity_config:
+    vacuum.deebot:
+      name: Пылесос
+    media_player.sony_bravia_tv:
+      name: Телевизор
+      room: Гостиная
+      aliases:
+        - "телевизор в гостиной"
+        - "TV"
+    media_player.samsungtv_encrypted:
+      name: TV2
+    media_player.tv_samsung_led22:
+      name: TV3
+    switch.pc:
+      name: Компьютер
+      aliases:
+        - "computer"
+        - "pc"
+    switch.work_pc:
+      name: Рабочий компьютер
+      room: Кабинет
+      aliases:
+        - "work computer"
+        - "work pc"
+    light.kitchen:
+      name: Свет на кухне
+      aliases:
+        - "kitchen light"
+    light.corridor:
+      name: Свет в коридоре
+      aliases:
+        - "corridor light"
+    light.tambur:
+      name: Свет в тамбуре
+      aliases:
+        - "tambur light"
+    climate.ac:
+      name: Кондиционер
+      aliases:
+        - "AC"
+    input_boolean.mode_sleep:
+      name: Sleep Mode
+    input_boolean.mode_away:
+      name: Away Mode
+    fan.kitchen_hood_fan:
+      name: Hood Fan
+    light.kitchen_hood_light:
+      name: Hood Light
