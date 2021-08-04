@@ -6,6 +6,8 @@
       state: "off"
     light.wled:
       state: "off"
+    light.livingroom_tv:
+      state: "off"
     switch.pc:
       state: "off"
     switch.work_pc:
@@ -20,10 +22,11 @@
       state: "off"
     light.wled:
       state: "off"
+    light.livingroom_tv:
+      state: "off"
     switch.pc:
       state: "off"
     light.toilet:
       state: "off"
     light.cabinet:
       state: "off"
-

@@ -1,5 +1,5 @@
 - id: '1612949304955'
-  alias: Reboot router on internet lost
+  alias: Notification - Internet lost
   description: ''
   trigger:
   - platform: state
@@ -10,54 +10,63 @@
   action:
   - service: notify.mobile_app_sm_g9860
     data:
-      message: Internet connection has been lost. Home Assistant will reoot router
-        in 2 minutes.
-  - service: timer.start
-    data: {}
-    entity_id: timer.router_reboot_countdown
+      message: Internet connection was lost for a while
   mode: single
 - id: '1604939660805'
-  alias: Mute TV on phone call
+  alias: Automate - Mute TV on phone call
   description: ''
   trigger:
   - platform: state
     entity_id: sensor.sm_g9860_phone_state
     to: ringing
+    id: call
   - platform: state
     entity_id: sensor.sm_g9860_phone_state
     to: offhook
+    id: call
+  - platform: state
+    entity_id: sensor.sm_g9860_phone_state
+    to: idle
+    id: idle
   condition:
   - condition: state
     entity_id: person.oleksandr
     state: home
+  - condition: not
+    conditions:
+    - condition: device
+      device_id: 745d26659dbaf63767790c478ea6288d
+      domain: media_player
+      entity_id: media_player.sony_bravia_tv
+      type: is_off
   action:
-  - service: media_player.media_pause
-    data: {}
-    target:
-      entity_id: media_player.sony_bravia_tv
-      device_id: a3af181ce3e9d1acb3dffaad60232da3
-  - service: media_player.volume_mute
-    data:
-      is_volume_muted: true
-    target:
-      entity_id: media_player.sony_bravia_tv
-      device_id: a3af181ce3e9d1acb3dffaad60232da3
-  - wait_for_trigger:
-    - platform: state
-      entity_id: sensor.sm_g9860_phone_state
-      to: idle
-  - service: media_player.volume_mute
-    data:
-      is_volume_muted: false
-    target:
-      entity_id: media_player.sony_bravia_tv
-      device_id: a3af181ce3e9d1acb3dffaad60232da3
-  - service: media_player.media_play
-    data: {}
-    target:
-      entity_id: media_player.sony_bravia_tv
-      device_id: a3af181ce3e9d1acb3dffaad60232da3
-  mode: single
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: call
+      sequence:
+      - service: media_player.media_pause
+        target:
+          area_id: gostinaia
+      - service: media_player.volume_mute
+        data:
+          is_volume_muted: true
+        target:
+          area_id: gostinaia
+    - conditions:
+      - condition: trigger
+        id: idle
+      sequence:
+      - service: media_player.volume_mute
+        data:
+          is_volume_muted: false
+        target:
+          area_id: gostinaia
+      - service: media_player.media_play
+        target:
+          area_id: gostinaia
+    default: []
+  mode: restart
 - id: '1613122603515'
   alias: Alert - On water leak
   description: ''
@@ -194,10 +203,7 @@
   description: Twitch stream announces on speaker
   trigger:
   - platform: state
-    entity_id:
-    - sensor.twitch_guit88man
-    - sensor.twitch_cahchec
-    - sensor.twitch_unclebjorn
+    entity_id: sensor.twitch_guit88man,sensor.twitch_cahchec,sensor.twitch_unclebjorn,sensor.twitch_silvername
     to: streaming
     for: 0:00:30
   condition:
@@ -296,7 +302,7 @@
       message: Washing has been finished!
   mode: single
 - id: '1613163512382'
-  alias: Turn off pc power
+  alias: Automate - Turn off pc power
   description: ''
   trigger:
   - platform: state
@@ -317,29 +323,152 @@
     entity_id: switch.livingroom_plug
     domain: switch
   mode: single
-- id: '1613845078667'
-  alias: Light - Toilet
+- id: '1615888678577'
+  alias: Alert - Unsufficient space on Nuc drive
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.nuc_used_percent
+    above: '95'
+    for: 00:01:00
+  condition: []
+  action:
+  - service: notify.mobile_app_sm_g9860
+    data:
+      title: ⚠️ Warning!
+      message: Unsofficient space left on Nuc dive.
+      data:
+        channel: Alerts
+        importance: max
+        color: red
+  - service: notify.telegram
+    data:
+      title: ⚠️ Warning!
+      message: Unsofficient space left on Nuc dive.
+  mode: single
+- id: '1625646004211'
+  alias: Light - WLED TV
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: light.livingroom_tv
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: device
+        type: is_off
+        device_id: 7ecc2fb00b7df9abf5a754e10b4f7488
+        entity_id: light.livingroom_tv
+        domain: light
+      - condition: device
+        type: is_on
+        device_id: de7fc2bbbf74f16d2d2d84ad41e7f03e
+        entity_id: light.wled
+        domain: light
+      sequence:
+      - type: turn_off
+        device_id: de7fc2bbbf74f16d2d2d84ad41e7f03e
+        entity_id: light.wled
+        domain: light
+    - conditions:
+      - condition: device
+        type: is_on
+        device_id: 7ecc2fb00b7df9abf5a754e10b4f7488
+        entity_id: light.livingroom_tv
+        domain: light
+      - condition: device
+        type: is_off
+        device_id: de7fc2bbbf74f16d2d2d84ad41e7f03e
+        entity_id: light.wled
+        domain: light
+      sequence:
+      - type: turn_on
+        device_id: de7fc2bbbf74f16d2d2d84ad41e7f03e
+        entity_id: light.wled
+        domain: light
+    default: []
+  mode: single
+- id: '1627630032807'
+  alias: Notification - New Wi-Fi device in network
+  trigger:
+  - platform: event
+    event_type: device_tracker_new_device
+  action:
+  - service: notify.telegram
+    data:
+      message: 'New device: {{trigger.event.data.host_name}} ({{trigger.event.data.entity_id}})
+
+        '
+      title: New device connected
+  mode: single
+- id: '1627903944060'
+  alias: Mode - Guests
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: input_boolean.mode_guests
+    id: state
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.mode_guests
+        state: 'on'
+      sequence:
+      - service: automation.turn_off
+        target:
+          entity_id: automation.announce_twitch
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.mode_guests
+        state: 'off'
+      sequence:
+      - service: automation.turn_on
+        target:
+          entity_id: automation.announce_twitch
+    default: []
+  mode: single
+- id: '1627908810286'
+  alias: Notification - Motion in tambur
   description: ''
   trigger:
   - type: motion
     platform: device
-    device_id: d200b3ca3a4c78c0c78a317b8fa18051
-    entity_id: binary_sensor.ble_motion_nightlight
+    device_id: fbd4f134ea563fe78c23306dac509515
+    entity_id: binary_sensor.tambur_motion
     domain: binary_sensor
-  condition: []
+  condition:
+  - condition: not
+    conditions:
+    - condition: zone
+      entity_id: person.oleksandr
+      zone: zone.home
   action:
-  - type: turn_on
-    device_id: 095f00f37cf8b0d04ac9893668ac504b
-    entity_id: light.toilet_light
-    domain: light
-  - wait_for_trigger:
-    - type: no_motion
-      platform: device
-      device_id: d200b3ca3a4c78c0c78a317b8fa18051
-      entity_id: binary_sensor.ble_motion_nightlight
-      domain: binary_sensor
-  - type: turn_off
-    device_id: 095f00f37cf8b0d04ac9893668ac504b
-    entity_id: light.toilet_light
-    domain: light
-  mode: restart
+  - service: notify.telegram
+    data:
+      message: 'There is motion in tambur right now. '
+      title: 🚶‍♂️ Motion detected
+  mode: single
+- id: '1627909125055'
+  alias: Notification - Doorbell ring
+  description: ''
+  trigger:
+  - type: sound
+    platform: device
+    device_id: 9ad718eb888b0a4aad72cd6cb62d6812
+    entity_id: binary_sensor.doorbell_chime
+    domain: binary_sensor
+  condition:
+  - condition: not
+    conditions:
+    - condition: zone
+      entity_id: person.oleksandr
+      zone: zone.home
+  action:
+  - service: notify.telegram
+    data:
+      message: Someone rang the doorbell while you are not home
+      title: 🔔 Doorbell is ringing
+  mode: single

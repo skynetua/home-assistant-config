@@ -9,12 +9,12 @@ telegram_bot:
     api_key: !secret telegram_api_key
     parse_mode: html
     allowed_chat_ids:
-      - !secret telegram_chat_id
+      - !secret telegaram_group_chat_id
 
 notify:
   - name: telegram
     platform: telegram
-    chat_id: !secret telegram_chat_id
+    chat_id: !secret telegaram_group_chat_id
   - platform: tts
     name: tts_living_room
     tts_service: tts.google_say

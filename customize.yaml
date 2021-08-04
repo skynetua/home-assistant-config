@@ -80,3 +80,8 @@ device_tracker.homeassistant:
   icon: mdi:raspberry-pi
 zone.home:
   radius: 30
+binary_sensor.lumi_lumi_sensor_magnet_aq2_on_off:
+  device_class: door
+switch.office_pc:
+  icon: mdi:desktop-classic
+  device_class: switch

@@ -16,7 +16,7 @@ wifi:
 #    subnet: 255.255.255.0
   ap:
     ssid: ${device_name}_hotspot
-    password: "sP6MR38bsT4H"
+    password: !secret esp_pass
 
 web_server:
   port: 80

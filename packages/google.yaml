@@ -19,10 +19,6 @@ google_assistant:
       aliases:
         - "телевизор в гостиной"
         - "TV"
-    media_player.samsungtv_encrypted:
-      name: TV2
-    media_player.tv_samsung_led22:
-      name: TV3
     switch.pc:
       name: Компьютер
       aliases:
@@ -58,3 +54,5 @@ google_assistant:
       name: Hood Fan
     light.kitchen_hood_light:
       name: Hood Light
+    cover.kitchen_blinds:
+      name: Шторы на кухне

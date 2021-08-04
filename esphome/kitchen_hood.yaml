@@ -1,32 +1,53 @@
+substitutions:
+  device_name: kitchen_hood
+  key_low: GPIO21               # black
+  key_medium: GPIO22            # white
+  key_high: GPIO23              # red
+  key_light: GPIO27
+  relay_low: GPIO19
+  relay_medium: GPIO18
+  relay_high: GPIO17
+  relay_light: GPIO16
+  dth_pin: GPIO25
+  gd_pin: GPIO26
+  ga_pin: GPIO34
+
 esphome:
-  name: kitchen_hood
-  platform: ESP8266
-  board: nodemcuv2
+  name: ${device_name}
+  platform: ESP32
+  board: esp-wrover-kit
 
 wifi:
-  ssid: "MikroTik-2.4GHz"
-  password: "AllKas1987"
-  
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
 #  manual_ip:
-#    static_ip: 192.168.88.193
+#    static_ip: 192.168.88.191
 #    gateway: 192.168.88.1
 #    subnet: 255.255.255.0
-
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
+# Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Nodemcu Led Fallback Hotspot"
-    password: "P9JkReflQ7St"
+    ssid: ${device_name}_hotspot
+    password: !secret esp_pass
 
 captive_portal:
+
 logger:
+
 api:
+  password: !secret esp_pass
+
 ota:
+  password: !secret esp_pass
+
+web_server:
+  port: 80
 
 binary_sensor:
   - platform: gpio
     id: key1
     pin:
-      number: D5
+      number: ${key_low}
       inverted: True
       mode: INPUT_PULLUP
     name: "Kitchen Hood Speed 1 key"
@@ -36,14 +57,14 @@ binary_sensor:
       then:
         - fan.turn_on:
             id: fan1
-            speed: LOW
+            speed: 33
     on_release:
       then:
         - script.execute: sync
   - platform: gpio
     id: key2
     pin:
-      number: D6
+      number: ${key_medium}
       inverted: True
       mode: INPUT_PULLUP
     name: "Kitchen Hood Speed 2 key"
@@ -53,14 +74,14 @@ binary_sensor:
       then:
         - fan.turn_on:
             id: fan1
-            speed: MEDIUM
+            speed: 66
     on_release:
       then:
         - script.execute: sync
   - platform: gpio
     id: key3
     pin:
-      number: D7
+      number: ${key_high}
       inverted: True
       mode: INPUT_PULLUP
     name: "Kitchen Hood Speed 3 key"
@@ -70,14 +91,14 @@ binary_sensor:
       then:
         - fan.turn_on:
             id: fan1
-            speed: HIGH
+            speed: 100
     on_release:
       then:
         - script.execute: sync            
   - platform: gpio
     id: key4
     pin:
-      number: D1
+      number: ${key_light}
       inverted: True
       mode: INPUT_PULLUP
     name: "Kitchen Hood Light key"
@@ -89,28 +110,27 @@ binary_sensor:
     on_release:
       then:
         - light.turn_off: light1
+  - platform: gpio
+    id: gas
+    device_class: gas
+    name: Hood Gas
+    pin: ${gd_pin}
 
 switch:
   - platform: gpio
-    name: Fan low
-    icon: mdi:fan-speed-1
-    pin: D2
+    pin: ${relay_low}
     id: relay1
     interlock: &interlock_group [relay1, relay2, relay3]
     interlock_wait_time: 300ms
 
   - platform: gpio
-    name: Fan medium
-    icon: mdi:fan-speed-2
     id: relay2
-    pin: D3
+    pin: ${relay_medium}
     interlock: *interlock_group
     interlock_wait_time: 300ms
 
   - platform: gpio
-    name: Fan high
-    icon: mdi:fan-speed-3
-    pin: D4
+    pin: ${relay_high}
     id: relay3
     interlock: *interlock_group
     interlock_wait_time: 300ms
@@ -118,12 +138,26 @@ switch:
 sensor:
   - platform: dht
     model: DHT11
-    pin: D0
+    pin: ${dth_pin}
     temperature:
       name: "Hood Temperature"
+      filters:
+        - calibrate_linear:
+           - 16.4 -> 16
+           - 22.9 -> 22.5
     humidity:
       name: "Hood Humidity"
-    update_interval: 120s
+    update_interval: 60s
+  - platform: adc
+    pin: ${ga_pin}
+    name: "Gas Concentration"
+    update_interval: 60s
+    attenuation: 11db
+    filters:
+      - multiply: 100
+    unit_of_measurement: "%"
+    icon: "mdi:percent"
+
 
 light:
   - platform: binary
@@ -146,7 +180,6 @@ output:
           condition:
             lambda: return ((state == 0));
           then:
-            # action for off
             - switch.turn_off: relay1
             - switch.turn_off: relay2
             - switch.turn_off: relay3
@@ -154,23 +187,20 @@ output:
           condition:
             lambda: return ((state > 0) && (state < .34));
           then:
-            # action for low
             - switch.turn_on: relay1
       - if:
           condition:
             lambda: return ((state > .34) && (state < .7));
           then:
-           # action for medium
             - switch.turn_on: relay2
       - if:
           condition:
             lambda: return ((state == 1));
           then:
-            # action for high
             - switch.turn_on: relay3
   - platform: gpio
     id: light_output
-    pin: D8
+    pin: ${relay_light}
     
 script:
   - id: sync
@@ -184,7 +214,4 @@ script:
               - binary_sensor.is_off: key2
               - binary_sensor.is_off: key3
           then:
-            - logger.log: "Conditions met"
             - fan.turn_off: fan1
-          else:
-            - logger.log: "Cond not met"

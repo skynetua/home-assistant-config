@@ -4,13 +4,13 @@ esphome:
   board: nodemcuv2
 
 wifi:
-  ssid: "MikroTik-2.4GHz"
-  password: "AllKas1987"
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: "Multisensor Fallback Hotspot"
-    password: "O7c3MYWB0L3g"
+    password: !secret esp_pass
 
 captive_portal:
 
@@ -47,25 +47,6 @@ sensor:
     address: 0x76
     i2c_id: bus_a
     update_interval: 60s
-    
-
-  - platform: dht
-    model: DHT11
-    pin: D7
-    temperature:
-      name: "Outdoor Temperature"
-      filters:
-        - calibrate_linear:
-           - 16.4 -> 16
-           - 22.9 -> 22.5
-    humidity:
-      name: "Outdoor Humidity"
-#      filters:
-#        - calibrate_linear:
-#          # Map 0.0 (from sensor) to 0.0 (true value)
-#          - 15.2 -> 15
-#          - 22.9 -> 22.4
-    update_interval: 60s
 
 i2c:
  - id: bus_a
@@ -73,14 +54,6 @@ i2c:
    scl: 5             #D1
    scan: True
 
-binary_sensor:
-  - platform: gpio
-    pin:
-      number: D6
-      inverted: True
-    name: "Light"
-    device_class: light
-    
 light:
   - platform: fastled_clockless
     chipset: WS2812B
@@ -88,3 +61,12 @@ light:
     num_leds: 41
     rgb_order: GRB
     name: "Cabinet LEDS"
+    
+switch:
+  - platform: gpio
+    pin: D5
+    id: pc_sw
+    name: "PC-SW"
+    on_turn_on:
+    - delay: 500ms
+    - switch.turn_off: pc_sw

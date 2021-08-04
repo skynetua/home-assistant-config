@@ -6,6 +6,4 @@ living_room_light:
   name: Living Room light
   entities:
     - light.wled
-    - light.corridor
-    - light.kitchen
-    - swicth.ac_panel_light
+    - light.livingroom_tv

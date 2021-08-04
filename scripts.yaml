@@ -1,0 +1,56 @@
+update_plants_timer:
+  alias: Plants watering timer refresh
+  sequence:
+    - service: input_datetime.set_datetime
+      data_template:
+        entity_id: input_datetime.plants_watering
+        datetime: '{{ now().strftime("%Y-%m-%d %H:%M:%S") }}'
+  mode: single
+clean_bedroom:
+  alias: Clean Bedroom
+  icon: "mdi:broom"
+  mode: single
+  sequence:
+    - data:
+        params:
+          cleanings: 1
+          rooms: "{{ states.vacuum.deebot.attributes.room_bedroom }}"
+        entity_id: vacuum.deebot
+        command: spot_area
+      service: vacuum.send_command
+clean_living_room:
+  alias: Clean Living Room
+  icon: "mdi:broom"
+  mode: single
+  sequence:
+    - data:
+        params:
+          cleanings: 1
+          rooms: "{ states.vacuum.deebot.attributes.room_living_room }}"
+        entity_id: vacuum.deebot
+        command: spot_area
+      service: vacuum.send_command
+clean_kitchen:
+  alias: Clean Kitchen
+  icon: "mdi:broom"
+  mode: single
+  sequence:
+    - data:
+        params:
+          cleanings: 1
+          rooms: "{{ states.vacuum.deebot.attributes.room_kitchen }}"
+        entity_id: vacuum.deebot
+        command: spot_area
+      service: vacuum.send_command
+clean_office:
+  alias: Clean Office
+  icon: "mdi:broom"
+  mode: single
+  sequence:
+    - data:
+        params:
+          cleanings: 1
+          rooms: "{{ states.vacuum.deebot.attributes.room_study }}"
+        entity_id: vacuum.deebot
+        command: spot_area
+      service: vacuum.send_command
