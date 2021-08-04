@@ -1,0 +1,113 @@
+substitutions:
+  device_name: kitchen_blinds
+
+esphome:
+  name: ${device_name}
+  platform: ESP8266
+  board: nodemcuv2
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+#  manual_ip:
+#    static_ip: 192.168.88.193
+#    gateway: 192.168.88.1
+#    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: ${device_name}_hotspot
+    password: "sP6MR38bsT4H"
+
+captive_portal:
+
+logger:
+
+api:
+  password: !secret esp_pass
+  services:
+    - service: control_stepper
+      variables:
+        target: int
+      then:
+        - stepper.set_target:
+            id: stepper1
+            target: !lambda 'return target;'
+ota:
+  password: !secret esp_pass
+
+web_server:
+  port: 80
+
+stepper:
+  - platform: uln2003
+    id: stepper1
+    pin_a: D0
+    pin_b: D1
+    pin_c: D2
+    pin_d: D3
+    max_speed: 300 steps/s
+    sleep_when_done: true
+    # Optional:
+    acceleration: inf
+    deceleration: inf
+  - platform: uln2003
+    id: stepper2
+    pin_a: D5
+    pin_b: D6
+    pin_c: D7
+    pin_d: D8
+    max_speed: 300 steps/s
+    sleep_when_done: true
+    # Optional:
+    acceleration: inf
+    deceleration: inf
+    
+cover:
+  - platform: template
+    name: Kitchen Blinds Left
+    id: ${device_name}_left
+    open_action:
+      - stepper.report_position:
+          id: stepper1
+          position: !lambda return id(stepper1).current_position;
+      - stepper.set_target:
+          id: stepper1
+          target: !lambda return -11000 + id(stepper1).current_position;
+    close_action:
+      - stepper.report_position:
+          id: stepper1
+          position: !lambda return id(stepper1).current_position;
+      - stepper.set_target:
+          id: stepper1
+          target: !lambda return 11000 - id(stepper1).current_position;
+    stop_action:
+      - stepper.set_target:
+          id: stepper1
+          target: !lambda return id(stepper1).current_position;      
+    optimistic: true
+    has_position: true
+  - platform: template
+    name: Kitchen Blinds Right
+    id: ${device_name}_right
+    open_action:
+      - stepper.report_position:
+          id: stepper2
+          position: !lambda return id(stepper2).current_position;
+      - stepper.set_target:
+          id: stepper2
+          target: !lambda return -11000 + id(stepper2).current_position;
+    close_action:
+      - stepper.report_position:
+          id: stepper2
+          position: !lambda return id(stepper2).current_position;
+      - stepper.set_target:
+          id: stepper2
+          target: !lambda return 11000 - id(stepper2).current_position;
+    stop_action:
+      - stepper.set_target:
+          id: stepper2
+          target: !lambda return id(stepper2).current_position;      
+    optimistic: true
+    has_position: true

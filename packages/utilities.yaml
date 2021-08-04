@@ -1,0 +1,13 @@
+input_text:
+  power:
+    name: Power Consumption
+    icon: mdi:flash
+  gas:
+    name: Gas Consumption
+    icon: mdi:fire
+  water_kitchen:
+    name: Water Consumption
+    icon: mdi:water
+  water_toilet:
+    name: Water Consumption
+    icon: mdi:water
