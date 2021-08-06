@@ -21,3 +21,6 @@ sensor:
     port: 32400
     section_types:
       - show
+
+media_extractor:
+  default_query: best

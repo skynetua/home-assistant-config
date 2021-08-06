@@ -19,11 +19,13 @@
   - platform: state
     entity_id: sensor.sm_g9860_phone_state
     to: ringing
-    id: call
+    id: in_call
+    from: idle
   - platform: state
     entity_id: sensor.sm_g9860_phone_state
     to: offhook
-    id: call
+    id: in_call
+    from: idle
   - platform: state
     entity_id: sensor.sm_g9860_phone_state
     to: idle
@@ -43,7 +45,7 @@
   - choose:
     - conditions:
       - condition: trigger
-        id: call
+        id: in_call
       sequence:
       - service: media_player.media_pause
         target:
@@ -483,5 +485,8 @@
     weekday:
     - sat
   action:
-  - service: shell_command.github_push
+  - service: hassio.addon_stdin
+    data:
+      addon: a0d7b954_ssh
+      input: /config/git_update.sh
   mode: single

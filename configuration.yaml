@@ -7,7 +7,6 @@ homeassistant:
 frontend:
   themes: !include_dir_merge_named themes
 
-# Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
 group: !include groups.yaml
@@ -20,20 +19,10 @@ http:
   trusted_proxies:
     - 172.30.33.1
 
-#logger:
-#  default: error
-#  logs:
-#homeassistant.components.zha: debug
-#homeassistant.components.mobile_app.webhook: debug
-#    custom_components.ble_monitor: debug
-#
-media_extractor:
-  default_query: best
-
 logger:
   default: error
-  logs:
-    custom_components.tuya_v2: debug
+  logs: {}
+#    homeassistant.components.mobile_app.webhook: debug
+#    custom_components.ble_monitor: debug
+#    custom_components.tuya_v2: debug
 
-shell_command:
-  github_push: git commit -am 'Weekly update `date`' && git push
