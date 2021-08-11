@@ -1,13 +1,32 @@
 input_text:
-  power:
-    name: Power Consumption
-    icon: mdi:flash
-  gas:
-    name: Gas Consumption
-    icon: mdi:fire
   water_kitchen:
     name: Water Consumption
     icon: mdi:water
   water_toilet:
     name: Water Consumption
     icon: mdi:water
+
+utility_meter:
+  gas_used_daily:
+    source: sensor.gas_consumption
+    cycle: daily
+  gas_used_monthly:
+    source: sensor.gas_consumption
+    cycle: monthly
+
+template:
+  - sensor:
+      - name: "Total Used Energy"
+        unique_id: total_used_energy
+        device_class: energy
+        unit_of_measurement: "kWh"
+        state_class: measurement
+        state: >
+          {{ (states('sensor.tybf80e8022a47e42295doxx') | float + 14046.3) |round(1) }}
+      - name: "Total Used Gas"
+        unique_id: total_used_gas
+        unit_of_measurement: "m³"
+        icon: mdi:fire
+        state_class: measurement
+        state: >
+          {{ (states('sensor.gas_consumption') | float + 2545.03) |round(2) }}
