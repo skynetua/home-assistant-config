@@ -8,7 +8,6 @@ sensor:
       - cahchec
       - UncleBjorn
       - SilverName
-    scan_interval: 60
 
 script:
   cast_twitch_stream:

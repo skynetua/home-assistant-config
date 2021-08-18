@@ -26,7 +26,7 @@ clean_living_room:
     - data:
         params:
           cleanings: 1
-          rooms: "{ states.vacuum.deebot.attributes.room_living_room }}"
+          rooms: "{{ states.vacuum.deebot.attributes.room_living_room }}"
         entity_id: vacuum.deebot
         command: spot_area
       service: vacuum.send_command
@@ -51,6 +51,18 @@ clean_office:
         params:
           cleanings: 1
           rooms: "{{ states.vacuum.deebot.attributes.room_study }}"
+        entity_id: vacuum.deebot
+        command: spot_area
+      service: vacuum.send_command
+clean_corridor:
+  alias: Clean Corridor
+  icon: "mdi:broom"
+  mode: single
+  sequence:
+    - data:
+        params:
+          cleanings: 1
+          rooms: "{{ states.vacuum.deebot.attributes.room_corridor }}"
         entity_id: vacuum.deebot
         command: spot_area
       service: vacuum.send_command

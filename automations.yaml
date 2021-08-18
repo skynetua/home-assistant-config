@@ -317,7 +317,7 @@
     - type: power
       platform: device
       device_id: cb089c8a02f25c9ca3753776ff8d0f38
-      entity_id: sensor.livingroom_plug_electrical_measurement
+      entity_id: sensor.tz3000_g5xawfcq_ts0121_electrical_measurement
       domain: sensor
       below: 5
   - type: turn_off
@@ -488,5 +488,5 @@
   - service: hassio.addon_stdin
     data:
       addon: a0d7b954_ssh
-      input: /config/git_update.sh
+      input: /config/scripts/git_update.sh
   mode: single

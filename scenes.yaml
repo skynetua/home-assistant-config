@@ -10,7 +10,11 @@
       state: "off"
     switch.pc:
       state: "off"
-    switch.work_pc:
+    switch.office_pc:
+      state: "off"
+    light.office_light:
+      state: "off"
+    light.toilet:
       state: "off"
 - id: "1611782046067"
   name: Away
@@ -28,5 +32,5 @@
       state: "off"
     light.toilet:
       state: "off"
-    light.cabinet:
+    light.office_light:
       state: "off"

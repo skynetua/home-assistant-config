@@ -49,5 +49,5 @@ media_player:
     sessionid: 1
     port: 8080
   - platform: dlna_dmr
-    url: http://192.168.88.203:7676/smp_63_
+    url: http://192.168.88.203:7676/smp_15_
     name: Samsung TV DMR

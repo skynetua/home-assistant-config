@@ -13,6 +13,9 @@ utility_meter:
   gas_used_monthly:
     source: sensor.gas_consumption
     cycle: monthly
+  gas_used_yearly:
+    source: sensor.gas_consumption
+    cycle: yearly
 
 template:
   - sensor:
@@ -29,4 +32,4 @@ template:
         icon: mdi:fire
         state_class: measurement
         state: >
-          {{ (states('sensor.gas_consumption') | float + 2545.03) |round(2) }}
+          {{ (states('sensor.gas_used_yearly') | float + 2548.08) |round(2) }}
