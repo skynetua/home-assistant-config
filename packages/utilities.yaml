@@ -7,6 +7,12 @@ input_text:
     icon: mdi:water
 
 utility_meter:
+  energy_used_monthly:
+    source: sensor.tybf80e8022a47e42295doxx
+    cycle: monthly
+  energy_used_yearly:
+    source: sensor.tybf80e8022a47e42295doxx
+    cycle: yearly
   gas_used_daily:
     source: sensor.gas_consumption
     cycle: daily
@@ -15,6 +21,12 @@ utility_meter:
     cycle: monthly
   gas_used_yearly:
     source: sensor.gas_consumption
+    cycle: yearly
+  water_used_monthly:
+    source: sensor.total_used_water
+    cycle: monthly
+  water_used_yearly:
+    source: sensor.total_used_water
     cycle: yearly
 
 template:
@@ -32,4 +44,11 @@ template:
         icon: mdi:fire
         state_class: measurement
         state: >
-          {{ (states('sensor.gas_used_yearly') | float + 2548.08) |round(2) }}
+          {{ (states('sensor.gas_used_yearly') | float + 2548.09) |round(2) }}
+      - name: "Total Used Water"
+        unique_id: total_used_water
+        unit_of_measurement: "m³"
+        icon: mdi:water
+        state_class: measurement
+        state: >
+          {{ (states('input_text.water_kitchen') | float + states('input_text.water_toilet') | float) |round(2) }}
