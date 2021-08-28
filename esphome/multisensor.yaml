@@ -70,3 +70,4 @@ switch:
     on_turn_on:
     - delay: 500ms
     - switch.turn_off: pc_sw
+    

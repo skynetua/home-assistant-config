@@ -87,3 +87,5 @@ switch.office_pc:
   device_class: switch
 sensor.tybf80e8022a47e42295doxx:
   unit_of_measurement: kWh
+cover.kitchen_blinds_right:
+  device_class: curtain

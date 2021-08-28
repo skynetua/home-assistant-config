@@ -1,10 +1,111 @@
+#https://github.com/RoadkillUK/Motor-on-a-Roller-Blind-for-ESPHOME - Written by RoadkillUK
+
+# This sketch will add 2 switches named <upper_devicename> Setup Switch and Setup Button
+# Use your mobile or tablet and connect to http://<devicename>.local to set up the blind
+# Turn on the Setup Switch to enter Setup Mode and use the Setup Button as shown below to setup blinds.
+
+# 1) Turn on the Setup Switch to enter setup mode
+# 2) Press Setup button to start the blind closing
+# 3) Press Setup button again when closed and blind starts to open (actually resets the stepper position to 0)
+# 4) Press Setup button again when blind is fully open
+# 5) Job Done
+
+# This sketch also includes a momentary button on D7 which can be used in the following way
+# 1) Press button for > 1 second to enter setup mode
+# 2) Press button again to start the blind closing
+# 3) Press button again when closed and blind starts to open (actually resets the stepper position to 0)
+# 4) Press button again when blind is fully open
+# 5) Job Done
+
+# Button is also used to open/close the blind (must be fully open/closed first)
+
+# Copy these files to the config/esphome/ directory
+# Don't compile this sketch, edit testblind.yaml (if required) and compile that sketch
+# You won't be able to see this sketch in HA (because of the . at the front of the filename)
+
 substitutions:
-  device_name: kitchen_blinds
+  devicename: kitchen_shades
+  upper_devicename: Kitchen Shades
+  speed: 600 steps/s # Set the speed of the motor
+  s1_pina: D0 # Swap these \_ coil a
+  s1_pinb: D1 # Swap these /
+  s1_pinc: D2 # Swap these \_ coil b
+  s1_pind: D3 # Swap these /
+  s2_pina: D4
+  s2_pinb: D5
+  s2_pinc: D6
+  s2_pind: D8
 
 esphome:
   name: ${device_name}
   platform: ESP8266
   board: nodemcuv2
+  esp8266_restore_from_flash: True
+  on_boot:
+    - priority: -200.0
+      then:
+      - stepper.report_position: # Set stepper to global variable
+          id: $mystepper
+          position: !lambda return id(${mystepper}_global);
+      - stepper.set_target: # Set stepper to global variable
+          id: $mystepper
+          target: !lambda return id(${mystepper}_global);
+      - if: # If blind is Closed
+          condition:
+            - lambda: 'return id(${mystepper}_global) == 0;'
+          then: # Publish state etc.
+            - cover.template.publish:
+                id: blinded
+                state: CLOSED
+                current_operation: IDLE
+      - if: # If blind is Open
+          condition:
+            - lambda: 'return id(${mystepper}_global) == id(endstop);'
+          then: # Publish state etc.
+            - cover.template.publish:
+                id: blinded
+                state: OPEN
+                current_operation: IDLE
+      - if: # If blind is Neither
+          condition:
+            - lambda: 'return (id(${mystepper}_global) != 0) && (id(${mystepper}_global) != id(endstop));'
+          then: #  # Publish state etc.
+            - cover.template.publish:
+                id: blinded
+                position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+                current_operation: IDLE
+    - priority: -200.0
+      then:
+      - stepper.report_position: # Set stepper to global variable
+          id: $mystepper
+          position: !lambda return id(${mystepper}_global);
+      - stepper.set_target: # Set stepper to global variable
+          id: $mystepper
+          target: !lambda return id(${mystepper}_global);
+      - if: # If blind is Closed
+          condition:
+            - lambda: 'return id(${mystepper}_global) == 0;'
+          then: # Publish state etc.
+            - cover.template.publish:
+                id: blinded
+                state: CLOSED
+                current_operation: IDLE
+      - if: # If blind is Open
+          condition:
+            - lambda: 'return id(${mystepper}_global) == id(endstop);'
+          then: # Publish state etc.
+            - cover.template.publish:
+                id: blinded
+                state: OPEN
+                current_operation: IDLE
+      - if: # If blind is Neither
+          condition:
+            - lambda: 'return (id(${mystepper}_global) != 0) && (id(${mystepper}_global) != id(endstop));'
+          then: #  # Publish state etc.
+            - cover.template.publish:
+                id: blinded
+                position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+                current_operation: IDLE    
 
 wifi:
   ssid: !secret wifi_ssid
@@ -17,8 +118,11 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: ${device_name}_hotspot
-    password: "sP6MR38bsT4H"
+    ssid: $upper_devicename
+    password: !secret wifi_pass
+    
+web_server:
+  port: 80
 
 captive_portal:
 
@@ -26,23 +130,25 @@ logger:
 
 api:
   password: !secret esp_pass
-  services:
-    - service: control_stepper
-      variables:
-        target: int
-      then:
-        - stepper.set_target:
-            id: stepper1
-            target: !lambda 'return target;'
+
 ota:
   password: !secret esp_pass
 
-web_server:
-  port: 80
 
 stepper:
   - platform: uln2003
     id: stepper1
+    pin_a: D4
+    pin_b: D6
+    pin_c: D7
+    pin_d: D8
+    max_speed: 300 steps/s
+    sleep_when_done: true
+    # Optional:
+    acceleration: inf
+    deceleration: inf
+  - platform: uln2003
+    id: stepper2
     pin_a: D0
     pin_b: D1
     pin_c: D2
@@ -52,22 +158,12 @@ stepper:
     # Optional:
     acceleration: inf
     deceleration: inf
-  - platform: uln2003
-    id: stepper2
-    pin_a: D5
-    pin_b: D6
-    pin_c: D7
-    pin_d: D8
-    max_speed: 300 steps/s
-    sleep_when_done: true
-    # Optional:
-    acceleration: inf
-    deceleration: inf
-    
+
 cover:
   - platform: template
     name: Kitchen Blinds Left
     id: ${device_name}_left
+    device_class: shade
     open_action:
       - stepper.report_position:
           id: stepper1
@@ -91,6 +187,7 @@ cover:
   - platform: template
     name: Kitchen Blinds Right
     id: ${device_name}_right
+    device_class: shade
     open_action:
       - stepper.report_position:
           id: stepper2
@@ -111,3 +208,18 @@ cover:
           target: !lambda return id(stepper2).current_position;      
     optimistic: true
     has_position: true
+
+binary_sensor:
+  - platform: gpio
+    id: key1
+    pin:
+      number: D5
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Open Blinds"
+    on_press:
+      then:
+        - cover.open: ${device_name}_right
+    on_release:
+      then:
+        - cover.stop: ${device_name}_right

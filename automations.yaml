@@ -212,6 +212,14 @@
   - condition: state
     entity_id: person.oleksandr
     state: home
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: input_boolean.mode_sleep
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.mode_guests
+      state: 'on'
   action:
   - service: notify.tts_living_room
     data:
@@ -228,16 +236,6 @@
   condition: []
   action:
   - scene: scene.sleep
-  - service: automation.turn_off
-    entity_id: automation.announce_twitch
-  - wait_for_trigger:
-    - platform: state
-      entity_id: input_boolean.mode_sleep
-      to: 'off'
-    continue_on_timeout: false
-  - service: automation.turn_on
-    data: {}
-    entity_id: automation.announce_twitch
   mode: single
 - id: '1613124857885'
   alias: Notification - Sleep mode Off
@@ -404,34 +402,6 @@
         '
       title: New device connected
   mode: single
-- id: '1627903944060'
-  alias: Mode - Guests
-  description: ''
-  trigger:
-  - platform: state
-    entity_id: input_boolean.mode_guests
-    id: state
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.mode_guests
-        state: 'on'
-      sequence:
-      - service: automation.turn_off
-        target:
-          entity_id: automation.announce_twitch
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.mode_guests
-        state: 'off'
-      sequence:
-      - service: automation.turn_on
-        target:
-          entity_id: automation.announce_twitch
-    default: []
-  mode: single
 - id: '1627908810286'
   alias: Notification - Motion in tambur
   description: ''
@@ -490,3 +460,13 @@
       addon: a0d7b954_ssh
       input: /config/scripts/git_update.sh
   mode: single
+- id: '1629710747262'
+  alias: Light - Toilet
+  description: ''
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      motion_entity: binary_sensor.toilet_ias_zone
+      light_target:
+        area_id: tualet
+      no_motion_wait: 30
