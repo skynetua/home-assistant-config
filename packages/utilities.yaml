@@ -35,20 +35,20 @@ template:
         unique_id: total_used_energy
         device_class: energy
         unit_of_measurement: "kWh"
-        state_class: measurement
+        state_class: total_increasing
         state: >
-          {{ (states('sensor.tybf80e8022a47e42295doxx') | float + 14046.3) |round(1) }}
+          {{ (states('sensor.tybf80e8022a47e42295doxx') | float + 14046.3) }}
       - name: "Total Used Gas"
         unique_id: total_used_gas
         unit_of_measurement: "m³"
         icon: mdi:fire
-        state_class: measurement
+        state_class: total_increasing
         state: >
-          {{ (states('sensor.gas_used_yearly') | float + 2548.09) |round(2) }}
+          {{ (states('sensor.gas_used_yearly') | float + 2548.04) }}
       - name: "Total Used Water"
         unique_id: total_used_water
         unit_of_measurement: "m³"
         icon: mdi:water
-        state_class: measurement
+        state_class: total_increasing
         state: >
-          {{ (states('input_text.water_kitchen') | float + states('input_text.water_toilet') | float) |round(2) }}
+          {{ (states('input_text.water_kitchen') | float + states('input_text.water_toilet') | float) }}

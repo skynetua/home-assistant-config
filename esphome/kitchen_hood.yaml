@@ -160,20 +160,19 @@ sensor:
     icon: "mdi:percent"
   - platform: pulse_counter
     pin: 
-      number: reed_sw_pin
+      number: $reed_sw_pin
       mode: INPUT_PULLUP
     name: "Gas Consumption"
     update_interval : 60s
     filters:
       - lambda: |-
-          static float total_value = 0.0;
+          static float total_value = 0.00;
           total_value += x * 0.01;
           return total_value;
     unit_of_measurement: "m³"
     accuracy_decimals: 2
-    last_reset_type: auto
-    state_class: measurement
-    icon: 'mdi:fire'
+    state_class: total_increasing
+    device_class: gas
 
 light:
   - platform: binary
