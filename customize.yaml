@@ -85,7 +85,3 @@ binary_sensor.lumi_lumi_sensor_magnet_aq2_on_off:
 switch.office_pc:
   icon: mdi:desktop-classic
   device_class: switch
-sensor.tybf80e8022a47e42295doxx:
-  unit_of_measurement: kWh
-cover.kitchen_blinds_right:
-  device_class: curtain

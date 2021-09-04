@@ -424,13 +424,18 @@
       title: 🚶‍♂️ Motion detected
   mode: single
 - id: '1627909125055'
-  alias: Notification - Doorbell ring
+  alias: Notification - Doorbell or domofon
   description: ''
   trigger:
   - type: sound
     platform: device
     device_id: 9ad718eb888b0a4aad72cd6cb62d6812
     entity_id: binary_sensor.doorbell_chime
+    domain: binary_sensor
+  - type: locked
+    platform: device
+    device_id: 9ad718eb888b0a4aad72cd6cb62d6812
+    entity_id: binary_sensor.domofon_incoming_call
     domain: binary_sensor
   condition:
   - condition: not
@@ -441,8 +446,9 @@
   action:
   - service: notify.telegram
     data:
-      message: Someone rang the doorbell while you are not home
-      title: 🔔 Doorbell is ringing
+      message: '{{ trigger.to_state.attributes.friendly_name }} is ringing while you
+        are not home'
+      title: 🔔 Doorbell or domofon is ringing
   mode: single
 - id: '1628081966719'
   alias: Automate - Github Update

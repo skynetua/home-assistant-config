@@ -24,8 +24,7 @@ google_assistant:
       aliases:
         - "computer"
         - "pc"
-    switch.work_pc:
-      name: Рабочий компьютер
+    switch.office_pc:
       room: Кабинет
       aliases:
         - "work computer"

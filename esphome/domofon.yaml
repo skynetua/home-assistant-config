@@ -1,0 +1,50 @@
+esphome:
+  name: domofon
+  platform: ESP8266
+  board: esp01_1m
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Domofon Fallback Hotspot"
+    password: "x58OlSguhCNZ"
+
+captive_portal:
+
+web_server:
+  port: 80
+
+
+logger:
+  baud_rate: 0 #need this to free up UART pins
+
+uart:
+  baud_rate: 115200 # speed to STC15L101EW
+  tx_pin: GPIO1
+  rx_pin: GPIO3
+
+switch:
+  - platform: template
+    name: 'Relay 1'
+    id: relay1
+    turn_on_action:
+      - uart.write: [0xA0, 0x01, 0x01, 0xA2]
+    turn_off_action:
+      - uart.write: [0xA0, 0x01, 0x00, 0xA1]
+    optimistic: true
+  - platform: template
+    name: 'Relay 2'
+    id: relay2
+    turn_on_action:
+      - uart.write: [0xA0, 0x02, 0x01, 0xA3]
+    turn_off_action:
+      - uart.write: [0xA0, 0x02, 0x00, 0xA2]
+    optimistic: true
