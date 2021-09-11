@@ -1,4 +1,4 @@
-#https://github.com/RoadkillUK/Motor-on-a-Roller-Blind-for-ESPHOME - Written by RoadkillUK
+#https://github.com/RoadkillUK/Motor-on-a-Roller-Blind-3for-ESPHOME - Written by RoadkillUK
 
 # This sketch will add 2 switches named <upper_devicename> Setup Switch and Setup Button
 # Use your mobile or tablet and connect to http://<devicename>.local to set up the blind
@@ -26,7 +26,8 @@
 substitutions:
   devicename: kitchen_shades
   upper_devicename: Kitchen Shades
-  speed: 600 steps/s # Set the speed of the motor
+  mystepper: stepper2
+  speed: 400 steps/s # Set the speed of the motor
   s1_pina: D0 # Swap these \_ coil a
   s1_pinb: D1 # Swap these /
   s1_pinc: D2 # Swap these \_ coil b
@@ -37,7 +38,7 @@ substitutions:
   s2_pind: D8
 
 esphome:
-  name: ${device_name}
+  name: ${devicename}
   platform: ESP8266
   board: nodemcuv2
   esp8266_restore_from_flash: True
@@ -74,49 +75,16 @@ esphome:
                 id: blinded
                 position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
                 current_operation: IDLE
-    - priority: -200.0
-      then:
-      - stepper.report_position: # Set stepper to global variable
-          id: $mystepper
-          position: !lambda return id(${mystepper}_global);
-      - stepper.set_target: # Set stepper to global variable
-          id: $mystepper
-          target: !lambda return id(${mystepper}_global);
-      - if: # If blind is Closed
-          condition:
-            - lambda: 'return id(${mystepper}_global) == 0;'
-          then: # Publish state etc.
-            - cover.template.publish:
-                id: blinded
-                state: CLOSED
-                current_operation: IDLE
-      - if: # If blind is Open
-          condition:
-            - lambda: 'return id(${mystepper}_global) == id(endstop);'
-          then: # Publish state etc.
-            - cover.template.publish:
-                id: blinded
-                state: OPEN
-                current_operation: IDLE
-      - if: # If blind is Neither
-          condition:
-            - lambda: 'return (id(${mystepper}_global) != 0) && (id(${mystepper}_global) != id(endstop));'
-          then: #  # Publish state etc.
-            - cover.template.publish:
-                id: blinded
-                position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
-                current_operation: IDLE    
 
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
-
+  
 #  manual_ip:
-#    static_ip: 192.168.88.193
+#    static_ip: 192.168.88.199
 #    gateway: 192.168.88.1
 #    subnet: 255.255.255.0
 
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: $upper_devicename
     password: !secret wifi_pass
@@ -134,92 +102,250 @@ api:
 ota:
   password: !secret esp_pass
 
-
 stepper:
   - platform: uln2003
-    id: stepper1
-    pin_a: D4
-    pin_b: D6
-    pin_c: D7
-    pin_d: D8
-    max_speed: 300 steps/s
-    sleep_when_done: true
-    # Optional:
-    acceleration: inf
-    deceleration: inf
-  - platform: uln2003
-    id: stepper2
-    pin_a: D0
-    pin_b: D1
-    pin_c: D2
-    pin_d: D3
-    max_speed: 300 steps/s
-    sleep_when_done: true
-    # Optional:
+    id: $mystepper
+    pin_a: $s1_pina
+    pin_b: $s1_pinb
+    pin_c: $s1_pinc
+    pin_d: $s1_pind
+    max_speed: ${speed} # Speed of the motor
+    sleep_when_done: True
     acceleration: inf
     deceleration: inf
 
-cover:
-  - platform: template
-    name: Kitchen Blinds Left
-    id: ${device_name}_left
-    device_class: shade
-    open_action:
-      - stepper.report_position:
-          id: stepper1
-          position: !lambda return id(stepper1).current_position;
-      - stepper.set_target:
-          id: stepper1
-          target: !lambda return -11000 + id(stepper1).current_position;
-    close_action:
-      - stepper.report_position:
-          id: stepper1
-          position: !lambda return id(stepper1).current_position;
-      - stepper.set_target:
-          id: stepper1
-          target: !lambda return 11000 - id(stepper1).current_position;
-    stop_action:
-      - stepper.set_target:
-          id: stepper1
-          target: !lambda return id(stepper1).current_position;      
-    optimistic: true
-    has_position: true
-  - platform: template
-    name: Kitchen Blinds Right
-    id: ${device_name}_right
-    device_class: shade
-    open_action:
-      - stepper.report_position:
-          id: stepper2
-          position: !lambda return id(stepper2).current_position;
-      - stepper.set_target:
-          id: stepper2
-          target: !lambda return -11000 + id(stepper2).current_position;
-    close_action:
-      - stepper.report_position:
-          id: stepper2
-          position: !lambda return id(stepper2).current_position;
-      - stepper.set_target:
-          id: stepper2
-          target: !lambda return 11000 - id(stepper2).current_position;
-    stop_action:
-      - stepper.set_target:
-          id: stepper2
-          target: !lambda return id(stepper2).current_position;      
-    optimistic: true
-    has_position: true
+globals:
+  - id: ${mystepper}_global # Integer for storing the stepper position in case of reboot
+    type: int
+    restore_value: True
+    initial_value: '0'
+
+  - id: openclosed # Boolean to store OPEN/CLOSED state
+    type: bool
+    restore_value: True
+    initial_value: '0'
+
+  - id: endstop # Variable for storing ENDSTOP (how far to move stepper)
+    type: int
+    restore_value: True
+    initial_value: '1000'
+
+  - id: settingmode # Integer for Setup Mode
+    type: int
+    restore_value: no
+    initial_value: '0'
 
 binary_sensor:
   - platform: gpio
-    id: key1
     pin:
-      number: D5
+      number: D7 # Connect Button to D7 and GND
       mode: INPUT_PULLUP
-      inverted: true
-    name: "Open Blinds"
-    on_press:
+      inverted: True
+    name: Button
+    internal: True
+    on_click:
+    - min_length: 50ms
+      max_length: 500ms
+      then: # Short press to OPEN/CLOSE blinds and also for setting up
+        - if: # If settings variable is on
+            condition:
+              - lambda: 'return id(settingmode) != 0;'
+            then: # Enter Setting Mode
+              - script.execute: setupbutton
+            else:
+              - if: # If blind is closed
+                  condition:
+                    - lambda: 'return id(openclosed) == 0;'
+                  then: # Open blind
+                    - cover.open: blinded
+                  else: # Close blind
+                    - cover.close: blinded
+    - min_length: 1000ms
+      max_length: 3000ms
+      then: # Long press to Enter Setting Mode
+        - logger.log: "Entered Settings Mode"
+        - globals.set:
+            id: settingmode
+            value:  '1'
+
+switch:
+  - platform: template
+    name: ${upper_devicename} Setup Switch # Switch to enter Setup Mode
+    id: setupswitch
+    lambda: |-
+      if (id(settingmode) != 0) {
+        return true;
+      } else {
+        return false;
+      }
+    turn_on_action:
       then:
-        - cover.open: ${device_name}_right
-    on_release:
+        - logger.log: "Entered Settings Mode"
+        - globals.set:
+            id: settingmode
+            value:  '1'
+    turn_off_action:
       then:
-        - cover.stop: ${device_name}_right
+        - logger.log: "Exiting Settings Mode"
+        - globals.set:
+            id: settingmode
+            value:  '0'
+  - platform: template
+    name: ${upper_devicename} Setup Button # Switch to replicate the Physical Button
+    id: hasetup
+    turn_on_action:
+      - if: # If settings variable is on
+          condition:
+            - lambda: 'return id(settingmode) != 0;'
+          then: # Enter Setting Mode
+            - script.execute: setupbutton
+            - switch.turn_off: hasetup
+
+cover:
+  - platform: template
+    name: $upper_devicename Right
+    id: blinded
+    open_action:
+      then:
+        - logger.log: "Opening"
+        - stepper.set_target: # Send stepper to endstop
+            id: $mystepper
+            target: !lambda return id(endstop);
+        - while:
+            condition:
+              lambda: 'return id($mystepper).current_position != id(endstop);'
+            then:
+              - cover.template.publish:
+                  id: blinded
+                  position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+                  current_operation: OPENING
+              - delay: 1000 ms
+        - globals.set: # Set global to current position
+            id: ${mystepper}_global
+            value: !lambda return id($mystepper).current_position; 
+        - globals.set: # Set toggle to OPEN (No need for 'optimistic mode')
+            id: openclosed
+            value: '1'
+        - cover.template.publish:
+            id: blinded
+            state: OPEN 
+            current_operation: IDLE
+    close_action:
+      then:
+        - logger.log: "Closing"
+        - stepper.set_target: # Send stepper to 0
+            id: $mystepper
+            target: '0'
+        - while:
+            condition:
+              lambda: 'return id($mystepper).current_position != 0;'
+            then:
+              - cover.template.publish:
+                  id: blinded
+                  position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+                  current_operation: CLOSING
+              - delay: 1000 ms
+        - globals.set: # Set global to current position
+            id: ${mystepper}_global
+            value: !lambda return id($mystepper).current_position; 
+        - globals.set: # Set toggle to CLOSED (No need for 'optimistic mode')
+            id: openclosed
+            value: '0'
+        - cover.template.publish:
+            id: blinded
+            state: CLOSED
+            current_operation: IDLE
+    position_action:
+      then:
+        - stepper.set_target:
+            id: $mystepper
+            target: !lambda return int(id(endstop) * pos);
+        - while:
+            condition:
+              lambda: 'return id($mystepper).current_position != int(id(endstop) * pos);'
+            then:
+              - cover.template.publish:
+                  id: blinded
+                  position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+              - delay: 1000 ms
+        - globals.set: # Set global to current position
+            id: ${mystepper}_global
+            value: !lambda return id($mystepper).current_position; 
+        - cover.template.publish:
+            id: blinded
+            position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+            current_operation: IDLE
+    stop_action:
+      then:
+        - stepper.set_target:
+            id: $mystepper
+            target: !lambda return id($mystepper).current_position;
+        - globals.set: # Set global to current position
+            id: ${mystepper}_global
+            value: !lambda return id($mystepper).current_position;
+        - cover.template.publish:
+            id: blinded
+            position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+            current_operation: IDLE
+    has_position: true
+    device_class: shade
+
+script:
+  - id: setupbutton
+    then:
+      - if:
+          condition:
+            - lambda: 'return (id(settingmode) == 3);'
+          then:
+            - logger.log: "Pressed Setup Button: Mode 3"
+            - stepper.set_target: # Set Stepper position
+                id: $mystepper
+                target: !lambda return id($mystepper).current_position;
+            - globals.set: # Set Endstop Variable
+                id: endstop
+                value: !lambda return id($mystepper).current_position;
+            - globals.set: # Set Global stepper position
+                id: ${mystepper}_global
+                value: !lambda return id($mystepper).current_position;
+            - globals.set: # Reset Setting Mode
+                id: settingmode
+                value:  '0'
+            - globals.set: # Set toggle to Open
+                id: openclosed
+                value: '1'
+            - cover.template.publish:
+                id: blinded
+                state: OPEN 
+                current_operation: IDLE
+            - logger.log: "Exiting Setting Mode"
+      - if:
+          condition:
+            - lambda: 'return (id(settingmode) == 2);'
+          then:
+            - logger.log: "Pressed Setup Button: Mode 2"
+            - stepper.report_position: # Reset Stepper position to 0
+                id: $mystepper
+                position: '0'
+            - stepper.set_target: # Reset Stepper position to 0
+                id: $mystepper
+                target: '0'
+            - globals.set: # Move stepper to 0 (doesn't move it's already there!)
+                id: ${mystepper}_global
+                value: '0'
+            - stepper.set_target: # Reset Stepper position to 72000
+                id: $mystepper
+                target: '72000'
+            - globals.set: # Advance setup to next mode
+                id: settingmode
+                value:  '3'
+      - if:
+          condition:
+            - lambda: 'return (id(settingmode) == 1);'
+          then:
+            - logger.log: "Pressed Setup Button: Mode 1"
+            - stepper.report_position: # Set Stepper position to 72000, makes it move to 0 (Closed)
+                id: $mystepper
+                position: '72000'
+            - globals.set: # Advance setup to next mode
+                id: settingmode
+                value:  '2'

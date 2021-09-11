@@ -205,7 +205,7 @@
   description: Twitch stream announces on speaker
   trigger:
   - platform: state
-    entity_id: sensor.twitch_guit88man,sensor.twitch_cahchec,sensor.twitch_unclebjorn,sensor.twitch_silvername
+    entity_id: sensor.twitch_guit88man,sensor.twitch_cahchec,sensor.twitch_unclebjorn,sensor.twitch_silvername,sensor.twitch_lenagol0vach
     to: streaming
     for: 0:00:30
   condition:
@@ -466,13 +466,57 @@
       addon: a0d7b954_ssh
       input: /config/scripts/git_update.sh
   mode: single
-- id: '1629710747262'
+- id: '1631273652133'
   alias: Light - Toilet
   description: ''
-  use_blueprint:
-    path: homeassistant/motion_light.yaml
-    input:
-      motion_entity: binary_sensor.toilet_ias_zone
-      light_target:
-        area_id: tualet
-      no_motion_wait: 30
+  trigger:
+  - type: motion
+    platform: device
+    device_id: 228913f20d4a81b754aafc522d776c5e
+    entity_id: binary_sensor.toilet_ias_zone
+    domain: binary_sensor
+  condition:
+  - condition: state
+    entity_id: input_boolean.mode_sleep
+    state: 'off'
+  action:
+  - type: turn_on
+    device_id: 095f00f37cf8b0d04ac9893668ac504b
+    entity_id: light.toilet
+    domain: light
+  - wait_for_trigger:
+    - type: no_motion
+      platform: device
+      device_id: 228913f20d4a81b754aafc522d776c5e
+      entity_id: binary_sensor.toilet_ias_zone
+      domain: binary_sensor
+      for:
+        hours: 0
+        minutes: 2
+        seconds: 0
+        milliseconds: 0
+  - type: turn_off
+    device_id: 095f00f37cf8b0d04ac9893668ac504b
+    entity_id: light.toilet
+    domain: light
+  mode: restart
+- id: '1631274616469'
+  alias: Light - Kitchen
+  description: ''
+  trigger:
+  - type: no_motion
+    platform: device
+    device_id: 9cde2b2446ba215221b0e9805d7902c0
+    entity_id: binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone
+    domain: binary_sensor
+    for:
+      hours: 0
+      minutes: 3
+      seconds: 0
+      milliseconds: 0
+  condition: []
+  action:
+  - service: light.turn_off
+    target:
+      area_id: kukhnia
+  mode: restart

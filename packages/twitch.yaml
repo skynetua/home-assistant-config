@@ -8,6 +8,7 @@ sensor:
       - cahchec
       - UncleBjorn
       - SilverName
+      - lenagol0vach
 
 script:
   cast_twitch_stream:

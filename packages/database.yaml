@@ -7,7 +7,6 @@ recorder:
       - switch
       - light
       - media-player
-      - automation
       - vacuum
       - climate
       - sensor
