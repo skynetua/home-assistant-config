@@ -267,7 +267,7 @@
     entity_id: input_boolean.mode_sleep
   mode: single
 - id: '1613125278142'
-  alias: Notification - Washing finished
+  alias: Notification - Washing
   description: ''
   trigger:
   - type: power
@@ -276,30 +276,53 @@
     entity_id: sensor.toilet_plug_electrical_measurement
     domain: sensor
     above: 5
+    id: washing_started
+  - platform: numeric_state
+    entity_id: counter.washes
+    above: '15'
+    id: cleaning
   condition: []
   action:
-  - service: input_boolean.turn_on
-    data: {}
-    entity_id: input_boolean.washing
-  - wait_for_trigger:
-    - type: power
-      platform: device
-      device_id: e10bdfca6d169338d8cfabbcbb0cd91b
-      entity_id: sensor.toilet_plug_electrical_measurement
-      domain: sensor
-      below: 5
-      for:
-        hours: 0
-        minutes: 1
-        seconds: 0
-        milliseconds: 0
-    timeout: 03:00:00
-  - service: input_boolean.turn_off
-    data: {}
-    entity_id: input_boolean.washing
-  - service: notify.telegram
-    data:
-      message: Washing has been finished!
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: washing_started
+      sequence:
+      - service: input_boolean.turn_on
+        data: {}
+        entity_id: input_boolean.washing
+      - wait_for_trigger:
+        - type: power
+          platform: device
+          device_id: e10bdfca6d169338d8cfabbcbb0cd91b
+          entity_id: sensor.toilet_plug_electrical_measurement
+          domain: sensor
+          below: 5
+          for:
+            hours: 0
+            minutes: 1
+            seconds: 0
+            milliseconds: 0
+        timeout: 03:00:00
+      - service: input_boolean.turn_off
+        data: {}
+        entity_id: input_boolean.washing
+      - service: notify.telegram
+        data:
+          message: Washing has been finished!
+          title: Washing Machine
+      - service: counter.increment
+        target:
+          entity_id: counter.washes
+    - conditions:
+      - condition: trigger
+        id: cleaning
+      sequence:
+      - service: notify.telegram
+        data:
+          title: Washing Machine
+          message: Cleaning is required, turn on Samsung Eco Tub Clean program.
+    default: []
   mode: single
 - id: '1613163512382'
   alias: Automate - Turn off pc power
@@ -520,3 +543,44 @@
     target:
       area_id: kukhnia
   mode: restart
+- id: '1631868006395'
+  alias: Automate - Shades
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunrise
+    id: sunrise
+  - platform: sun
+    event: sunset
+    id: sunset
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: sunrise
+      - condition: device
+        device_id: 6e892c6dd3ea17853207ee0d3872f892
+        domain: cover
+        entity_id: cover.kitchen_shades_right
+        type: is_closed
+      sequence:
+      - service: cover.open_cover
+        target:
+          device_id:
+          - 6e892c6dd3ea17853207ee0d3872f892
+    - conditions:
+      - condition: trigger
+        id: sunset
+      - condition: device
+        device_id: 6e892c6dd3ea17853207ee0d3872f892
+        domain: cover
+        entity_id: cover.kitchen_shades_right
+        type: is_open
+      sequence:
+      - service: cover.close_cover
+        target:
+          device_id:
+          - 6e892c6dd3ea17853207ee0d3872f892
+    default: []
+  mode: single
