@@ -4,6 +4,13 @@ mikrotik_nat_rules:
   - switch.mikrotik_nat_upnp_192_168_88_200_plex_media_server
 living_room_light:
   name: Living Room light
+  icon: mdi:lightbulb-multiple
   entities:
     - light.wled
     - light.livingroom_tv
+kitchen_shades:
+  name: Kitchen Shades
+  icon: mdi:blinds
+  entities:
+    - cover.kitchen_shades_left
+    - cover.kitchen_shades_right

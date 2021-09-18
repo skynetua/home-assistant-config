@@ -53,5 +53,7 @@ google_assistant:
       name: Hood Fan
     light.kitchen_hood_light:
       name: Hood Light
+    cover.kitchen_shades_left:
+      name: Shades
     cover.kitchen_shades_right:
       name: Shades
