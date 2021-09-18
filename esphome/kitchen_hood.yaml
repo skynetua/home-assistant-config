@@ -105,12 +105,9 @@ binary_sensor:
     name: "Kitchen Hood Light key"
     filters:
       - delayed_on: 10ms
-    on_press:
+    on_state:
       then:
-        - light.turn_on: light1
-    on_release:
-      then:
-        - light.turn_off: light1
+        - light.toggle: light1
   - platform: gpio
     id: gas
     device_class: gas

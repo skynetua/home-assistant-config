@@ -44,7 +44,7 @@ template:
         icon: mdi:fire
         state_class: total_increasing
         state: >
-          {{ (states('sensor.gas_used_yearly') | float + 2548.04) }}
+          {{ (states('sensor.gas_used_yearly') | float + 2552.88) }}
       - name: "Total Used Water"
         unique_id: total_used_water
         unit_of_measurement: "m³"

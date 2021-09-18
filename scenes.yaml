@@ -2,35 +2,37 @@
   name: Sleep
   icon: mdi:sleep
   entities:
-    media_player.sony_bravia_tv:
-      state: "off"
     light.wled:
       state: "off"
     light.livingroom_tv:
+      state: "off"
+    light.office_light:
+      state: "off"
+    light.toilet:
+      state: "off"
+    light.kitchen_light:
+      state: "off"
+    media_player.sony_bravia_tv:
       state: "off"
     switch.pc:
       state: "off"
     switch.office_pc:
       state: "off"
-    light.office_light:
-      state: "off"
-    light.toilet:
-      state: "off"
 - id: "1611782046067"
   name: Away
   icon: mdi:power
   entities:
-    media_player.googlehome3251:
-      state: "off"
-    media_player.sony_bravia_tv:
-      state: "off"
     light.wled:
       state: "off"
     light.livingroom_tv:
       state: "off"
-    switch.pc:
-      state: "off"
     light.toilet:
       state: "off"
     light.office_light:
+      state: "off"
+    media_player.googlehome3251:
+      state: "off"
+    media_player.sony_bravia_tv:
+      state: "off"
+    switch.pc:
       state: "off"
