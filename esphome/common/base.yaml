@@ -1,0 +1,10 @@
+web_server:
+  port: 80
+
+logger:
+
+api:
+  password: !secret esp_pass
+
+ota:
+  password: !secret esp_pass

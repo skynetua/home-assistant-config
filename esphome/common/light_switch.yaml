@@ -1,0 +1,23 @@
+status_led:
+  pin:
+    number: $led_pin
+    inverted: True
+
+binary_sensor:
+  - platform: gpio
+    pin: $switch_pin
+    id: switch_1
+    on_state:
+      then:
+        - light.toggle: light_1
+
+light:
+  - platform: binary
+    id: light_1
+    name: $friendly_name
+    output: light_output
+
+output:
+  - platform: gpio
+    id: light_output
+    pin: $light_output_pin

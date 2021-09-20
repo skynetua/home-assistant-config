@@ -1,5 +1,6 @@
 substitutions:
-  device_name: kitchen_hood
+  device_name: kitchen-hood
+  friendly_name: Kitchen Hood
   key_low: GPIO21               # black
   key_medium: GPIO22            # white
   key_high: GPIO23              # red
@@ -18,31 +19,9 @@ esphome:
   platform: ESP32
   board: esp-wrover-kit
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
-
-#  manual_ip:
-#    static_ip: 192.168.88.191
-#    gateway: 192.168.88.1
-#    subnet: 255.255.255.0
-# Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: ${device_name}_hotspot
-    password: !secret esp_pass
-
-captive_portal:
-
-logger:
-
-api:
-  password: !secret esp_pass
-
-ota:
-  password: !secret esp_pass
-
-web_server:
-  port: 80
+packages:
+  base: !include common/base.yaml
+  wifi: !include common/wifi.yaml
 
 binary_sensor:
   - platform: gpio
@@ -51,7 +30,6 @@ binary_sensor:
       number: ${key_low}
       inverted: True
       mode: INPUT_PULLUP
-    name: "Kitchen Hood Speed 1 key"
     filters:
       - delayed_on: 10ms
     on_press:
@@ -68,7 +46,6 @@ binary_sensor:
       number: ${key_medium}
       inverted: True
       mode: INPUT_PULLUP
-    name: "Kitchen Hood Speed 2 key"
     filters:
       - delayed_on: 10ms
     on_press:
@@ -85,7 +62,6 @@ binary_sensor:
       number: ${key_high}
       inverted: True
       mode: INPUT_PULLUP
-    name: "Kitchen Hood Speed 3 key"
     filters:
       - delayed_on: 10ms
     on_press:
@@ -102,7 +78,6 @@ binary_sensor:
       number: ${key_light}
       inverted: True
       mode: INPUT_PULLUP
-    name: "Kitchen Hood Light key"
     filters:
       - delayed_on: 10ms
     on_state:
@@ -134,17 +109,19 @@ switch:
     interlock_wait_time: 300ms
     
 sensor:
+  - <<: !include common/uptime.yaml
+  - <<: !include common/rssi.yaml
   - platform: dht
     model: DHT11
     pin: ${dth_pin}
     temperature:
-      name: "Hood Temperature"
+      name: $friendly_name Temperature
       filters:
         - calibrate_linear:
            - 16.4 -> 16
            - 22.9 -> 22.5
     humidity:
-      name: "Hood Humidity"
+      name: $friendly_name Humidity
     update_interval: 60s
   - platform: adc
     pin: ${ga_pin}
@@ -174,15 +151,15 @@ sensor:
 light:
   - platform: binary
     id: light1
-    name: "Kitchen Hood Light"
+    name: $friendly_name Light
     output: light_output
-    
+
 fan:
   - platform: speed
     id: fan1
     output: fan_output
-    name: "Kitchen Hood Fan"
-    
+    name: $friendly_name Fan
+
 output:
   - platform: template
     id: fan_output
@@ -218,7 +195,6 @@ script:
   - id: sync
     mode: restart
     then: 
-      - logger.log: "Script Triggered"
       - if:
           condition: 
             and: 

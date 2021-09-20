@@ -1,31 +1,6 @@
-#https://github.com/RoadkillUK/Motor-on-a-Roller-Blind-3for-ESPHOME - Written by RoadkillUK
-
-# This sketch will add 2 switches named <upper_devicename> Setup Switch and Setup Button
-# Use your mobile or tablet and connect to http://<devicename>.local to set up the blind
-# Turn on the Setup Switch to enter Setup Mode and use the Setup Button as shown below to setup blinds.
-
-# 1) Turn on the Setup Switch to enter setup mode
-# 2) Press Setup button to start the blind closing
-# 3) Press Setup button again when closed and blind starts to open (actually resets the stepper position to 0)
-# 4) Press Setup button again when blind is fully open
-# 5) Job Done
-
-# This sketch also includes a momentary button on D7 which can be used in the following way
-# 1) Press button for > 1 second to enter setup mode
-# 2) Press button again to start the blind closing
-# 3) Press button again when closed and blind starts to open (actually resets the stepper position to 0)
-# 4) Press button again when blind is fully open
-# 5) Job Done
-
-# Button is also used to open/close the blind (must be fully open/closed first)
-
-# Copy these files to the config/esphome/ directory
-# Don't compile this sketch, edit testblind.yaml (if required) and compile that sketch
-# You won't be able to see this sketch in HA (because of the . at the front of the filename)
-
 substitutions:
-  devicename: kitchen_shades
-  upper_devicename: Kitchen Shades
+  device_name: kitchen-shades
+  friendly_name: Kitchen Shades
   mystepper: stepper2
   speed: 400 steps/s # Set the speed of the motor
   s1_pina: D0 # Swap these \_ coil a
@@ -37,8 +12,12 @@ substitutions:
   s2_pinc: D6
   s2_pind: D8
 
+packages:
+  base: !include common/base.yaml
+  wifi: !include common/wifi.yaml
+
 esphome:
-  name: ${devicename}
+  name: ${device_name}
   platform: ESP8266
   board: nodemcuv2
   esp8266_restore_from_flash: True
@@ -75,32 +54,6 @@ esphome:
                 id: blinded
                 position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
                 current_operation: IDLE
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
-  
-#  manual_ip:
-#    static_ip: 192.168.88.199
-#    gateway: 192.168.88.1
-#    subnet: 255.255.255.0
-
-  ap:
-    ssid: $upper_devicename
-    password: !secret wifi_pass
-    
-web_server:
-  port: 80
-
-captive_portal:
-
-logger:
-
-api:
-  password: !secret esp_pass
-
-ota:
-  password: !secret esp_pass
 
 stepper:
   - platform: uln2003
@@ -170,7 +123,7 @@ binary_sensor:
 
 switch:
   - platform: template
-    name: ${upper_devicename} Setup Switch # Switch to enter Setup Mode
+    name: ${friendly_name} Setup Switch # Switch to enter Setup Mode
     id: setupswitch
     lambda: |-
       if (id(settingmode) != 0) {
@@ -191,7 +144,7 @@ switch:
             id: settingmode
             value:  '0'
   - platform: template
-    name: ${upper_devicename} Setup Button # Switch to replicate the Physical Button
+    name: ${friendly_name} Setup Button # Switch to replicate the Physical Button
     id: hasetup
     turn_on_action:
       - if: # If settings variable is on
@@ -203,7 +156,7 @@ switch:
 
 cover:
   - platform: template
-    name: $upper_devicename Right
+    name: $friendly_name Right
     id: blinded
     open_action:
       then:

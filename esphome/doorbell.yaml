@@ -1,5 +1,6 @@
 substitutions:
   device_name: doorbell
+  friendly_name: Doorbell
   
   pin_relay_answer: D1
   pin_relay_open: D2
@@ -29,59 +30,12 @@ esphome:
   platform: ESP8266
   board: d1_mini
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
+packages:
+  wifi: !include common/wifi.yaml
+  base: !include common/base.yaml
 
-#  manual_ip:
-#    static_ip: 192.168.88.191
-#    gateway: 192.168.88.1
-#    subnet: 255.255.255.0
-# Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: ${device_name}_hotspot
-    password: !secret esp_pass
-
-captive_portal:
-
-logger:
-
-ota:
-  password: !secret esp_pass
-
-web_server:
-  port: 80
-  
 status_led:
   pin: $pin_led_blue
-
-api:
-  password: !secret esp_pass
-  reboot_timeout: 0s
-  services:
-    # Accept call service for Home Assistant
-    - service: accept_call
-      then:
-        - logger.log: "Call service 'Accept Call'"
-        - if:
-            condition:
-              binary_sensor.is_on: incoming_call
-            then:
-              script.execute: call_accept
-            else:
-              logger.log: "No incoming call"
-
-    # Reject call service for Home Assistant
-    - service: reject_call
-      then:
-        - logger.log: "Call service 'Reject Call'"
-        - if:
-            condition:
-              binary_sensor.is_on: incoming_call
-            then:
-              script.execute: call_reject
-            else:
-              logger.log: "No incoming call"
 
 script:
   # Accept incoming call
@@ -424,11 +378,13 @@ binary_sensor:
               - script.execute: led_blink_green_1_once
 
   - platform: template
-    name: "Doorbell Chime"
+    name: $friendly_name Chime
     id: doorbell_chime
     device_class: sound
 
 sensor:
+  - <<: !include common/uptime.yaml
+  - <<: !include common/rssi.yaml
   - platform: adc
     id: doorbell_chime_voltage
     pin: $pin_dorbell_chime

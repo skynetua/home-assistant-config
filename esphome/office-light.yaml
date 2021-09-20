@@ -1,0 +1,20 @@
+substitutions:
+  device_name: office-light
+  friendly_name: Office Light
+  switch_pin: GPIO04
+  light_output_pin: GPIO12
+  led_pin: GPIO13
+
+packages:
+  base: !include common/base.yaml
+  wifi: !include common/wifi.yaml
+  light_sw: !include common/light_switch.yaml
+
+esphome:
+  name: ${device_name}
+  platform: ESP8266
+  board: esp01_1m
+
+sensor:
+  - <<: !include common/uptime.yaml
+  - <<: !include common/rssi.yaml
