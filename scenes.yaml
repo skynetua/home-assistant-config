@@ -8,7 +8,9 @@
       state: "off"
     light.office_light:
       state: "off"
-    light.toilet:
+    light.office_desk_light:
+      state: "off"
+    light.toilet_light:
       state: "off"
     light.kitchen_light:
       state: "off"
@@ -26,9 +28,11 @@
       state: "off"
     light.livingroom_tv:
       state: "off"
-    light.toilet:
+    light.toilet_light:
       state: "off"
     light.office_light:
+      state: "off"
+    light.office_desk_light:
       state: "off"
     media_player.googlehome3251:
       state: "off"

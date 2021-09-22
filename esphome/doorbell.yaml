@@ -33,6 +33,13 @@ esphome:
 packages:
   wifi: !include common/wifi.yaml
   base: !include common/base.yaml
+  
+logger:
+  baud_rate: 0
+  level: DEBUG
+  logs:
+    adc: ERROR
+    sensor: ERROR
 
 status_led:
   pin: $pin_led_blue

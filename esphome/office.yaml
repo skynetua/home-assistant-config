@@ -1,44 +1,31 @@
+substitutions:
+  device_name: office
+  friendly_name: Office
+
+packages:
+  base: !include common/base.yaml
+  wifi: !include common/wifi.yaml
+
 esphome:
-  name: nodemcu_multisensor
+  name: $device_name
   platform: ESP8266
   board: nodemcuv2
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
-
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "Multisensor Fallback Hotspot"
-    password: !secret esp_pass
-
-captive_portal:
-
-
-web_server:
-  port: 80
-
-# Enable logging
-logger:
-
-# Enable Home Assistant API
-api:
-
-ota:
-
 sensor:
+  - <<: !include common/uptime.yaml
+  - <<: !include common/rssi.yaml
   - platform: bme280
     temperature:
-      name: "BME280 Temperature"
+      name: $friendly_name Temperature
       filters:
         - calibrate_linear:
           # Map 0.0 (from sensor) to 0.0 (true value)
           - 15.1 -> 16.3
           - 21.5 -> 22.4
     pressure:
-      name: "BME280 Pressure"
+      name: $friendly_name Pressure
     humidity:
-      name: "BME280 Humidity"
+      name: $friendly_name Humidity"
       filters:
         - calibrate_linear:
           # Map 0.0 (from sensor) to 0.0 (true value)
@@ -60,13 +47,13 @@ light:
     pin: D8
     num_leds: 41
     rgb_order: GRB
-    name: "Cabinet LEDS"
+    name: $friendly_name Desk Light
     
 switch:
   - platform: gpio
     pin: D5
     id: pc_sw
-    name: "PC-SW"
+    name: $friendly_name PC Switch
     on_turn_on:
     - delay: 500ms
     - switch.turn_off: pc_sw
