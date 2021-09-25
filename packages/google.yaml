@@ -41,7 +41,7 @@ google_assistant:
       name: Свет в тамбуре
       aliases:
         - "tambur light"
-    climate.ac:
+    climate.1e476dd8:
       name: Кондиционер
       aliases:
         - "AC"

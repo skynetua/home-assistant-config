@@ -68,6 +68,9 @@ device_tracker.google_nest_mini:
 device_tracker.nuc:
   friendly_name: Nuc
   icon: mdi:server
+device_tracker.a2_85_a7_ec_14_53:
+  friendly_name: Nuc Ethernet
+  icon: mdi:server
 device_tracker.homeassistant_2:
   friendly_name: Home Assistant
   icon: mdi:home-assistant
@@ -87,12 +90,10 @@ switch.office_pc:
   device_class: switch
 counter.washes:
   templates:
-    icon_color: >-
-      if (state > 10) return 'yellow'; 
-      if (state > 15) return 'red';
+    icon_color: if (state < 10) return 'var(--secondary-text-color)'; else return 'yellow';
 sensor.twitch_lenagol0vach:
-  friendly_name: LenaGolovach
+  pronunciation: LenaGolovach
 sensor.twitch_guit88man:
-  friendly_name: guitman
+  pronunciation: guitman
 sensor.twitch_cahchec:
-  friendly_name: sanches
+  pronunciation: sanches

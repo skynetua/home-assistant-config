@@ -1,10 +1,7 @@
 sensor:
-  # General
   - platform: time_date
     display_options:
       - "date_time"
-
-  # HA Usage
   - platform: systemmonitor
     resources:
       - type: processor_use
@@ -14,15 +11,11 @@ sensor:
       - type: last_boot
       - type: disk_free
         arg: /
-
-  # Nuc
   - platform: rest
     value_template: "{{ value_json }}"
     resource: http://192.168.88.200:61208/api/3/uptime
     name: Nuc Uptime
     scan_interval: 600
-
-    # Network
   - platform: dnsip
     name: publicip
 
@@ -32,3 +25,12 @@ binary_sensor:
     name: "Internet Connection"
     count: 2
     scan_interval: 60
+
+template:
+  - binary_sensor:
+      - name: HACS Updates
+        icon: hacs:hacs
+        state: "{{ states.sensor.hacs.state | int > 0 }}"
+        device_class: update
+        attributes:
+          repositories: "{{ states.sensor.hacs.attributes.repositories }}"

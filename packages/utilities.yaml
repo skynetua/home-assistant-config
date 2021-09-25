@@ -44,7 +44,7 @@ template:
         icon: mdi:fire
         state_class: total_increasing
         state: >
-          {{ (states('sensor.gas_used_yearly') | float + 2552.88) }}
+          {{ (states('sensor.gas_used_yearly') | float + 2552.37) }}
       - name: "Total Used Water"
         unique_id: total_used_water
         unit_of_measurement: "m³"
@@ -52,3 +52,15 @@ template:
         state_class: total_increasing
         state: >
           {{ (states('input_text.water_kitchen') | float + states('input_text.water_toilet') | float) }}
+
+sensor:
+  - platform: integration
+    source: sensor.tz3000_g5xawfcq_ts0121_electrical_measurement
+    name: Computer energy consumption
+    unit_prefix: k
+    round: 2
+  - platform: integration
+    source: sensor.toilet_plug_electrical_measurement
+    name: Washing Machine energy consumption
+    unit_prefix: k
+    round: 2

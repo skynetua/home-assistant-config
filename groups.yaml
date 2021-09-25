@@ -1,7 +1,9 @@
 mikrotik_nat_rules:
-  - switch.mikrotik_nat_tcp_443
-  - switch.mikrotik_nat_tcp_80
-  - switch.mikrotik_nat_upnp_192_168_88_200_plex_media_server
+  icon: mdi:router-network
+  entities:
+    - switch.mikrotik_nat_tcp_443
+    - switch.mikrotik_nat_tcp_80
+    - switch.mikrotik_nat_upnp_192_168_88_200_plex_media_server
 living_room_light:
   name: Living Room light
   icon: mdi:lightbulb-multiple
@@ -14,3 +16,11 @@ kitchen_shades:
   entities:
     - cover.kitchen_shades_left
     - cover.kitchen_shades_right
+updates:
+  name: Uidates Available
+  icon: mdi:package
+  entities:
+    - binary_sensor.updater
+    - binary_sensor.home_assistant_operating_system_update_available
+    - binary_sensor.mikrotik_firmware_update
+    - binary_sensor.hacs_updates

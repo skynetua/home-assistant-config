@@ -25,15 +25,3 @@ logger:
     custom_components.tuya_v2: debug
 #    homeassistant.components.mobile_app.webhook: debug
 #    custom_components.ble_monitor: debug
-
-sensor:
-  - platform: integration
-    source: sensor.tz3000_g5xawfcq_ts0121_electrical_measurement
-    name: pc_socket_energy
-    unit_prefix: k
-    round: 2
-  - platform: integration
-    source: sensor.toilet_plug_electrical_measurement
-    name: Washing Machine
-    unit_prefix: k
-    round: 2
