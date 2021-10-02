@@ -88,6 +88,26 @@ binary_sensor:
     device_class: gas
     name: Hood Gas
     pin: ${gd_pin}
+  - platform: gpio
+    id: test_bs
+    name: "test bs"
+    pin: 
+      number: $reed_sw_pin
+      mode: INPUT_PULLUP
+    on_press:
+      then:
+      - number.set:
+          id: numb
+          value: !lambda return id(numb).state ++;
+
+number:
+  - platform: template
+    name: "Template number"
+    id: numb
+    optimistic: true
+    min_value: 0
+    max_value: 10000
+    step: 1
 
 switch:
   - platform: gpio
@@ -139,6 +159,7 @@ sensor:
     name: "Gas Consumption"
     update_interval : 60s
     filters:
+      - debounce: 1.5s
       - lambda: |-
           static float total_value = 0.00;
           total_value += x * 0.01;
@@ -147,6 +168,22 @@ sensor:
     accuracy_decimals: 2
     state_class: total_increasing
     device_class: gas
+  - platform: pulse_meter
+    pin: 
+      number: $reed_sw_pin
+      mode: INPUT_PULLUP
+    unit_of_measurement: 'm³'
+    state_class: total_increasing
+    device_class: gas
+    name: 'Gas Usage'
+    filters:
+      - multiply: 0.01
+    total:
+      name: "Gas Usage Total"
+      unit_of_measurement: "m³"
+      accuracy_decimals: 2
+      state_class: total_increasing
+      device_class: gas
 
 light:
   - platform: binary

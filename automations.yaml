@@ -206,9 +206,8 @@
     - conditions:
       - condition: state
         entity_id: input_boolean.mode_away
-        state: ''
+        state: 'off'
       - condition: sun
-        before: sunrise
         after: sunset
       sequence:
       - service: light.turn_on
@@ -360,7 +359,8 @@
       device_id: cb089c8a02f25c9ca3753776ff8d0f38
       entity_id: sensor.tz3000_g5xawfcq_ts0121_electrical_measurement
       domain: sensor
-      below: 5
+      below: 10
+    continue_on_timeout: false
   - type: turn_off
     device_id: cb089c8a02f25c9ca3753776ff8d0f38
     entity_id: switch.livingroom_plug

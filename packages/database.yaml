@@ -11,41 +11,16 @@ recorder:
       - climate
       - sensor
       - binary_sensor
-    entities:
-      - input_boolean.washing
+      - cover
+      - input_boolean
+      - input_text
+    entities: {}
     entity_globs: {}
   exclude:
     entities:
       - sensor.home_assistant_v2_db
       - sensor.date_time
 
-# influxdb:
-#   host: !secret host_ip
-#   include:
-#     entities:
-#       - input_text.electricity
-#       - input_text.gas
-#       - input_text.water_bathroom
-#       - input_text.water_kitchen
-#     entity_globs:
-#       - sensor.tuya_temp_humidity_sensor*
-#       - sensor.ble_*
-#       - sensor.xiaomi_temp_hum_pressure_sensor_*
-#       - sensor.outdoor_*
-#       - sensor.bme280_*
-
 sensor:
   - platform: filesize
     file_paths:
-      - "/config/home-assistant_v2.db"
-  # - platform: influxdb
-  #   host: !secret host_ip
-  #   queries:
-  #     - name: InfluxDb size
-  #       unit_of_measurement: MB
-  #       value_template: "{{ (value | float / 1024 /1024) | round(1) }}"
-  #       group_function: sum
-  #       measurement: '"monitor"."shard"'
-  #       database: _internal
-  #       where: "time > now() - 10s"
-  #       field: diskBytes
