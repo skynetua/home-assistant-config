@@ -257,33 +257,32 @@
   - scene: scene.sleep
   mode: single
 - id: '1613124857885'
-  alias: Notification - Sleep mode Off
+  alias: Notification - Utility Meters Reminder
   description: ''
   trigger:
   - platform: time
     at: input_datetime.wake_up_time
-  condition:
-  - condition: state
-    entity_id: input_boolean.mode_sleep
-    state: 'on'
+  condition: []
   action:
-  - service: notify.mobile_app_sm_g9860
-    data:
-      title: Sleep Mode
-      message: It is time to disable sleep mode.
-      data:
-        actions:
-        - action: SLEEP_MODE_OFF
-          title: Turn Off
-  - wait_for_trigger:
-    - platform: event
-      event_type: mobile_app_notification_action
-      event_data:
-        action: SLEEP_MODE_OFF
-    continue_on_timeout: false
-  - service: input_boolean.turn_off
-    data: {}
-    entity_id: input_boolean.mode_sleep
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '"{{ now().day == 1 }}"'
+      sequence:
+      - service: notify.telegram
+        data:
+          title: 🔥 Utility Meters Reminder
+          message: Do not forget to report Gas meter value - {{ states('sensor.total_used_gas')
+            }}
+    - conditions:
+      - condition: template
+        value_template: '"{{ now().day == 15}}"'
+      sequence:
+      - service: notify.telegram
+        data:
+          title: 💧 Utility Meters Reminder
+          message: Do not forget to report Water meters value
+    default: []
   mode: single
 - id: '1613125278142'
   alias: Notification - Washing
@@ -609,4 +608,19 @@
           device_id:
           - 6e892c6dd3ea17853207ee0d3872f892
     default: []
+  mode: single
+- id: '1633446553886'
+  alias: Announce - Sunset
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunset
+  condition: []
+  action:
+  - service: media_player.play_media
+    target:
+      device_id: a3af181ce3e9d1acb3dffaad60232da3
+    data:
+      media_content_id: /media/local/serious-strike-533.mp3
+      media_content_type: music
   mode: single

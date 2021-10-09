@@ -1,22 +1,13 @@
 substitutions:
-  # NodeMCU v3 board
-  board: nodemcuv2
-  pin_relay_answer: D0
-  pin_relay_open: D1
-  pin_led_red: D2
-  pin_led_green: D3
-  pin_led_blue: D4
-  pin_call_detect: D5
-  pin_btn_accept: D6
+  pin_call_detect: GPIO0
+  pin_btn_accept: GPIO12
 
   # Relays configuration
   relays_inverted: 'true'
 
   # Wifi credentials
-  wifi_ssid: !secret wifi_ssid
-  wifi_password: !secret wifi_password
-  ap_ssid: "Domofon"
-  ap_password: "1234567890"
+  wifi_ssid: MikroTik-2.4GHz
+  wifi_password: CodePass123
 
   # OTA and API
   ota_password: "esphome"
@@ -39,20 +30,17 @@ esphome:
   platform: ESP8266
   board: esp01_1m
 
-# Enable Home Assistant API
-api:
-
 ota:
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
+  ssid: $wifi_ssid
+  password: $wifi_password
   fast_connect: on
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: "Domofon Fallback Hotspot"
-    password: "x58OlSguhCNZ"
+    password: "Pass1234"
 
 captive_portal:
 
@@ -67,28 +55,6 @@ uart:
   baud_rate: 115200 # speed to STC15L101EW
   tx_pin: GPIO1
   rx_pin: GPIO3
-
-switch:
-  - platform: template
-    name: 'Relay 1'
-    id: relay1
-    turn_on_action:
-      - uart.write: [0xA0, 0x01, 0x01, 0xA2]
-    turn_off_action:
-      - uart.write: [0xA0, 0x01, 0x00, 0xA1]
-    optimistic: true
-  - platform: template
-    name: 'Relay 2'
-    id: relay2
-    turn_on_action:
-      - uart.write: [0xA0, 0x02, 0x01, 0xA3]
-    turn_off_action:
-      - uart.write: [0xA0, 0x02, 0x00, 0xA2]
-    optimistic: true
-
-# Blue status led
-status_led:
-  pin: $pin_led_blue
 
 api:
   password: $api_password
@@ -125,13 +91,13 @@ script:
       - logger.log: "Accept call"
       - script.execute: state_no_call
       - delay: $relay_before_answer_delay
-      - output.turn_on: relay_answer
+      - switch.turn_on: relay_answer
       - delay: $relay_answer_on_time
-      - output.turn_on: relay_open
+      - switch.turn_on: relay_open
       - delay: $relay_open_on_time
-      - output.turn_off: relay_open
+      - switch.turn_off: relay_open
       - delay: $relay_after_open_delay
-      - output.turn_off: relay_answer
+      - switch.turn_off: relay_answer
 
   # Reject incoming call
   - id: call_reject
@@ -139,52 +105,19 @@ script:
       - logger.log: "Reject call"
       - script.execute: state_no_call
       - delay: $relay_before_answer_delay
-      - output.turn_on: relay_answer
+      - switch.turn_on: relay_answer
       - delay: $relay_answer_on_time
-      - output.turn_off: relay_answer
+      - switch.turn_off: relay_answer
 
   # No call state
   - id: state_no_call
     then:
       - logger.log: "Set state 'No call'"
-      - script.execute: led_off
-      - if:
-          condition:
-            switch.is_on: auto_open_once
-          then:
-            script.execute: led_blink_green_1_on
-      - if:
-          condition:
-            switch.is_on: auto_open
-          then:
-            script.execute: led_green_on_soft
-      - if:
-          condition:
-            switch.is_on: auto_reject
-          then:
-            script.execute: led_red_on_soft
-      - if:
-          condition:
-            and:
-              - switch.is_off: auto_open_once
-              - switch.is_off: auto_open
-              - switch.is_off: auto_reject
-          then:
-            script.execute: led_off
 
   # Call state
   - id: state_call
     then:
       - logger.log: "Set state 'Incoming call'"
-      - script.execute: led_off
-      - if:
-          condition:
-            and:
-              - switch.is_off: auto_open
-              - switch.is_off: auto_open_once
-              - switch.is_off: auto_reject
-          then:
-            script.execute: led_blink_red_1_on
       - if:
           condition:
             switch.is_on: auto_reject
@@ -202,62 +135,6 @@ script:
             - script.execute: call_accept
             - delay: 1s
             - switch.turn_off: auto_open_once
-
-  # Permanent blink green led with one flash
-  - id: led_blink_green_1_on
-    then:
-      light.turn_on:
-        id: rgb_led
-        effect: "Blink Green"
-
-  # Once blink green led with one flash
-  - id: led_blink_green_1_once
-    then:
-      - light.turn_on:
-          id: rgb_led
-          brightness: 50%
-          red: 0%
-          green: 100%
-          blue: 0%
-          transition_length: 100ms
-      - delay: 200ms
-      - script.execute: led_off
-
-  # Permanent on green led with soft brightness
-  - id: led_green_on_soft
-    then:
-      light.turn_on:
-        id: rgb_led
-        brightness: 50%
-        red: 0%
-        green: 100%
-        blue: 0%
-        transition_length: 100ms
-
-  # Permanent blink red led with one flash
-  - id: led_blink_red_1_on
-    then:
-      light.turn_on:
-        id: rgb_led
-        effect: "Blink Red"
-
-  # Permanent on red led with soft brightness
-  - id: led_red_on_soft
-    then:
-      light.turn_on:
-        id: rgb_led
-        brightness: 50%
-        red: 100%
-        green: 0%
-        blue: 0%
-        transition_length: 100ms
-
-  # Turn off leds
-  - id: led_off
-    then:
-      light.turn_off:
-        id: rgb_led
-        transition_length: 100ms
 
 switch:
   # Automatically open door switch
@@ -302,93 +179,32 @@ switch:
     on_turn_off:
       script.execute: state_no_call
 
-# RGB Led (not exported to Home Assistant)
-light:
-  - platform: rgb
-    id: rgb_led
-    name: "Domofon led"
-    internal: true
-    restore_mode: ALWAYS_OFF
-    red: led_red
-    green: led_green
-    blue: led_blue
-    effects:
-      - automation:
-          name: "Blink Green"
-          sequence:
-            - light.turn_on:
-                id: rgb_led
-                brightness: 50%
-                red: 0%
-                green: 100%
-                blue: 0%
-                transition_length: 100ms
-            - delay: 200ms
-            - light.turn_on:
-                id: rgb_led
-                brightness: 1%
-                red: 0%
-                green: 100%
-                blue: 0%
-                transition_length: 100ms
-            - delay: 3000ms
-      - automation:
-          name: "Blink Red"
-          sequence:
-            - light.turn_on:
-                id: rgb_led
-                brightness: 100%
-                red: 100%
-                green: 0%
-                blue: 0%
-                transition_length: 100ms
-            - delay: 500ms
-            - light.turn_on:
-                id: rgb_led
-                brightness: 1%
-                red: 100%
-                green: 0%
-                blue: 0%
-                transition_length: 100ms
-            - delay: 500ms
-
-output:
-  # Red LED
-  - platform: esp8266_pwm
-    id: led_red
-    pin:
-      number: $pin_led_red
-      mode: OUTPUT
-
-  # Green LED
-  - platform: esp8266_pwm
-    id: led_green
-    pin:
-      number: $pin_led_green
-      mode: OUTPUT
-
-  # Blue LED
-  - platform: esp8266_pwm
-    id: led_blue
-    pin:
-      number: $pin_led_blue
-      mode: OUTPUT
-
-  # Relay answer
-  - platform: gpio
+  - platform: template
     id: relay_answer
-    pin:
-      number: $pin_relay_answer
-      mode: OUTPUT
-      inverted: $relays_inverted
-
-  # Relay door open
-  - platform: gpio
+    turn_on_action:
+      - uart.write: [0xA0, 0x01, 0x01, 0xA2]
+    turn_off_action:
+      - uart.write: [0xA0, 0x01, 0x00, 0xA1]
+    optimistic: true
+  - platform: template
     id: relay_open
-    pin:
-      number: $pin_relay_open
-      mode: OUTPUT
-      inverted: $relays_inverted
+    turn_on_action:
+      - uart.write: [0xA0, 0x02, 0x01, 0xA3]
+    turn_off_action:
+      - uart.write: [0xA0, 0x02, 0x00, 0xA2]
+    optimistic: true
+    
+  - platform: template
+    id: test
+    name: "Test"
+    icon: "mdi:door-open"
+    optimistic: true
+    restore_state: true
+    on_turn_on:
+      - switch.turn_on: relay_answer
+    on_turn_off:
+      - switch.turn_off: relay_answer
+
 
 binary_sensor:
   # Call detection
@@ -456,4 +272,3 @@ binary_sensor:
               - switch.turn_off: auto_open
               - switch.turn_off: auto_open_once
               - switch.turn_off: auto_reject
-              - script.execute: led_blink_green_1_once
