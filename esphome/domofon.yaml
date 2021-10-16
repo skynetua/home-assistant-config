@@ -6,8 +6,8 @@ substitutions:
   relays_inverted: 'true'
 
   # Wifi credentials
-  wifi_ssid: MikroTik-2.4GHz
-  wifi_password: CodePass123
+  wifi_ssid: "3414"
+  wifi_password: "0992827524"
 
   # OTA and API
   ota_password: "esphome"
@@ -139,7 +139,7 @@ script:
 switch:
   # Automatically open door switch
   - platform: template
-    name: "Domofon automatically open"
+    name: "Открывать автоматически"
     id: auto_open
     icon: "mdi:door-open"
     optimistic: true
@@ -153,7 +153,7 @@ switch:
 
   # Automatically open door once switch
   - platform: template
-    name: "Domofon automatically open once"
+    name: "Открыть один раз"
     id: auto_open_once
     icon: "mdi:door-open"
     optimistic: true
@@ -167,7 +167,7 @@ switch:
 
   # Automatically reject call switch
   - platform: template
-    name: "Domofon automatically reject"
+    name: "Отклонять"
     id: auto_reject
     icon: "mdi:door-closed-lock"
     optimistic: true
@@ -193,17 +193,6 @@ switch:
     turn_off_action:
       - uart.write: [0xA0, 0x02, 0x00, 0xA2]
     optimistic: true
-    
-  - platform: template
-    id: test
-    name: "Test"
-    icon: "mdi:door-open"
-    optimistic: true
-    restore_state: true
-    on_turn_on:
-      - switch.turn_on: relay_answer
-    on_turn_off:
-      - switch.turn_off: relay_answer
 
 
 binary_sensor:
