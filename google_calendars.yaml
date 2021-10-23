@@ -1,0 +1,35 @@
+
+- cal_id: alexkas2@gmail.com
+  entities:
+  - device_id: alexkas2_gmail_com
+    ignore_availability: true
+    name: alexkas2@gmail.com
+    track: true
+
+- cal_id: en.ukrainian#holiday@group.v.calendar.google.com
+  entities:
+  - device_id: holidays_in_ukraine
+    ignore_availability: true
+    name: Holidays in Ukraine
+    track: true
+
+- cal_id: addressbook#contacts@group.v.calendar.google.com
+  entities:
+  - device_id: dni_rozhdeniia
+    ignore_availability: true
+    name: "\u0414\u043D\u0438 \u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F"
+    track: true
+
+- cal_id: 4t46hag2bki6ifm8vcfe2n71ok@group.calendar.google.com
+  entities:
+  - device_id: champions_league
+    ignore_availability: true
+    name: Champions League
+    track: false
+
+- cal_id: 6sg6shq73g4nse11tta6tonth4@group.calendar.google.com
+  entities:
+  - device_id: ukraine
+    ignore_availability: true
+    name: "\u26BD\uFE0F Ukraine"
+    track: false

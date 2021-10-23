@@ -15,3 +15,4 @@ home-assistant_v2.db-shm
 home-assistant_v2.db-wal
 esphome/domofon.yaml
 home-assistant.log.1
+.google.token
