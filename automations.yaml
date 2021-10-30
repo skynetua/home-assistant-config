@@ -260,14 +260,16 @@
   alias: Notification - Utility Meters Reminder
   description: ''
   trigger:
-  - platform: time
-    at: input_datetime.wake_up_time
+  - platform: state
+    entity_id: calendar.alexkas2_gmail_com
+    to: 'on'
   condition: []
   action:
   - choose:
     - conditions:
       - condition: template
-        value_template: '"{{ now().day == 1 }}"'
+        value_template: '{{ trigger.to_state.attributes.description == "gas_meter"
+          }}'
       sequence:
       - service: notify.telegram
         data:
@@ -343,27 +345,48 @@
     default: []
   mode: single
 - id: '1613163512382'
-  alias: Automate - Turn off pc power
+  alias: Automate - Livingroom Computer
   description: ''
   trigger:
   - platform: state
     entity_id: switch.home_pc_wol
-    to: 'off'
+    id: 'off'
     from: 'on'
+    to: 'off'
+  - platform: state
+    entity_id: switch.pc
+    from: 'off'
+    to: 'on'
+    id: 'on'
   condition: []
   action:
-  - wait_for_trigger:
-    - type: power
-      platform: device
-      device_id: cb089c8a02f25c9ca3753776ff8d0f38
-      entity_id: sensor.tz3000_g5xawfcq_ts0121_electrical_measurement
-      domain: sensor
-      below: 10
-    continue_on_timeout: false
-  - type: turn_off
-    device_id: cb089c8a02f25c9ca3753776ff8d0f38
-    entity_id: switch.livingroom_plug
-    domain: switch
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: 'on'
+      sequence:
+      - service: media_player.select_source
+        target:
+          device_id: 745d26659dbaf63767790c478ea6288d
+        data:
+          source: HDMI 3/ARC
+    - conditions:
+      - condition: trigger
+        id: 'off'
+      sequence:
+      - wait_for_trigger:
+        - type: power
+          platform: device
+          device_id: cb089c8a02f25c9ca3753776ff8d0f38
+          entity_id: sensor.plug_livingroom_electrical_measurement
+          domain: sensor
+          below: 10
+        continue_on_timeout: false
+      - type: turn_off
+        device_id: cb089c8a02f25c9ca3753776ff8d0f38
+        entity_id: switch.plug_livingroom_on_off
+        domain: switch
+    default: []
   mode: single
 - id: '1615888678577'
   alias: Alert - Unsufficient space on Nuc drive

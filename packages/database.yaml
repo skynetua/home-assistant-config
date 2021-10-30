@@ -4,17 +4,19 @@ recorder:
   auto_purge: true
   include:
     domains:
-      - switch
-      - light
-      - media-player
-      - vacuum
-      - climate
-      - sensor
       - binary_sensor
+      - climate
       - cover
       - input_boolean
       - input_text
-    entities: {}
+      - light
+      - media-player
+      - script
+      - sensor
+      - switch
+      - vacuum
+    entities:
+      - device_tracker.sm_g9860
     entity_globs: {}
   exclude:
     entities:

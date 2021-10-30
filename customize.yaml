@@ -90,10 +90,15 @@ switch.office_pc:
   device_class: switch
 counter.washes:
   templates:
-    icon_color: if (state < 10) return 'var(--secondary-text-color)'; else return 'yellow';
+    icon_color: if (state < 10) return 'var(--secondary-text-color)'; else return
+      'yellow';
 sensor.twitch_lenagol0vach:
   pronunciation: LenaGolovach
 sensor.twitch_guit88man:
   pronunciation: guitman
 sensor.twitch_cahchec:
   pronunciation: sanches
+sensor.plug_livingroom_smartenergy_metering_summation_delivered:
+  friendly_name: Compuer Energy usage
+sensor.plug_toilet_smartenergy_metering_summation_delivered:
+  friendly_name: Washing Machine Energy usage

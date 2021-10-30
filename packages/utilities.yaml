@@ -13,9 +13,6 @@ utility_meter:
   energy_used_yearly:
     source: sensor.tybf80e8022a47e42295doxx
     cycle: yearly
-  gas_used_daily:
-    source: sensor.gas_consumption
-    cycle: daily
   gas_used_monthly:
     source: sensor.gas_consumption
     cycle: monthly
@@ -52,17 +49,16 @@ template:
         state_class: total_increasing
         state: >
           {{ (states('input_text.water_kitchen') | float + states('input_text.water_toilet') | float) }}
-
-#  - select:
-#      - name: "Energy Tariff"
-#        state: f"{{{{ states('{_OPTION_INPUT_SELECT}') }}}}"
-#
-#          >
-#          {% if (states.sensor.energy_used_monthly.state | float < 250 )  -%}
-#            {{ 1.44 }}
-#          {%- else -%}
-#            {{ 1.68 }}
-#          {%- endif %}
-#
-#        unit_of_measurement: "UAH/kWh"
-#        icon: mdi:cash-multiple
+      - name: "Energy Tariff"
+        state: >
+          {% if (states.sensor.energy_used_monthly.state | float < 250 )  -%}
+            {{ 1.44 }}
+          {%- else -%}
+            {{ 1.68 }}
+          {%- endif %}
+        device_class: monetary
+        unit_of_measurement: "UAH/kWh"
+      - name: "Gas Tariff"
+        state: 7.99
+        device_class: monetary
+        unit_of_measurement: "UAH/m³"

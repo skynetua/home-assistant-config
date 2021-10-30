@@ -1,68 +1,86 @@
 update_plants_timer:
   alias: Plants watering timer refresh
   sequence:
-    - service: input_datetime.set_datetime
-      data_template:
-        entity_id: input_datetime.plants_watering
-        datetime: '{{ now().strftime("%Y-%m-%d %H:%M:%S") }}'
+  - service: input_datetime.set_datetime
+    data_template:
+      entity_id: input_datetime.plants_watering
+      datetime: '{{ now().strftime("%Y-%m-%d %H:%M:%S") }}'
   mode: single
 clean_bedroom:
   alias: Clean Bedroom
-  icon: "mdi:broom"
+  icon: mdi:broom
   mode: single
   sequence:
-    - data:
-        params:
-          cleanings: 1
-          rooms: "{{ states.vacuum.deebot.attributes.room_bedroom }}"
-        entity_id: vacuum.deebot
-        command: spot_area
-      service: vacuum.send_command
+  - data:
+      params:
+        cleanings: 1
+        rooms: '{{ states.vacuum.deebot.attributes.room_bedroom }}'
+      entity_id: vacuum.deebot
+      command: spot_area
+    service: vacuum.send_command
 clean_living_room:
   alias: Clean Living Room
-  icon: "mdi:broom"
+  icon: mdi:broom
   mode: single
   sequence:
-    - data:
-        params:
-          cleanings: 1
-          rooms: "{{ states.vacuum.deebot.attributes.room_living_room }}"
-        entity_id: vacuum.deebot
-        command: spot_area
-      service: vacuum.send_command
+  - data:
+      params:
+        cleanings: 1
+        rooms: '{{ states.vacuum.deebot.attributes.room_living_room }}'
+      entity_id: vacuum.deebot
+      command: spot_area
+    service: vacuum.send_command
 clean_kitchen:
   alias: Clean Kitchen
-  icon: "mdi:broom"
+  icon: mdi:broom
   mode: single
   sequence:
-    - data:
-        params:
-          cleanings: 1
-          rooms: "{{ states.vacuum.deebot.attributes.room_kitchen }}"
-        entity_id: vacuum.deebot
-        command: spot_area
-      service: vacuum.send_command
+  - data:
+      params:
+        cleanings: 1
+        rooms: '{{ states.vacuum.deebot.attributes.room_kitchen }}'
+      entity_id: vacuum.deebot
+      command: spot_area
+    service: vacuum.send_command
 clean_office:
   alias: Clean Office
-  icon: "mdi:broom"
+  icon: mdi:broom
   mode: single
   sequence:
-    - data:
-        params:
-          cleanings: 1
-          rooms: "{{ states.vacuum.deebot.attributes.room_study }}"
-        entity_id: vacuum.deebot
-        command: spot_area
-      service: vacuum.send_command
+  - data:
+      params:
+        cleanings: 1
+        rooms: '{{ states.vacuum.deebot.attributes.room_study }}'
+      entity_id: vacuum.deebot
+      command: spot_area
+    service: vacuum.send_command
 clean_corridor:
   alias: Clean Corridor
-  icon: "mdi:broom"
+  icon: mdi:broom
   mode: single
   sequence:
-    - data:
-        params:
-          cleanings: 1
-          rooms: "{{ states.vacuum.deebot.attributes.room_corridor }}"
-        entity_id: vacuum.deebot
-        command: spot_area
-      service: vacuum.send_command
+  - data:
+      params:
+        cleanings: 1
+        rooms: '{{ states.vacuum.deebot.attributes.room_corridor }}'
+      entity_id: vacuum.deebot
+      command: spot_area
+    service: vacuum.send_command
+reconnect_wan:
+  sequence:
+  - type: turn_off
+    device_id: 8405f4ca1bbfa10ce34ba47b4a91812b
+    entity_id: switch.mikrotik_port_ether1
+    domain: switch
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
+  - type: turn_on
+    device_id: 8405f4ca1bbfa10ce34ba47b4a91812b
+    entity_id: switch.mikrotik_port_ether1
+    domain: switch
+  mode: single
+  alias: Reconnect WAN
+  icon: mdi:wan

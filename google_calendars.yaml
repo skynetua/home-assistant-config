@@ -33,3 +33,10 @@
     ignore_availability: true
     name: "\u26BD\uFE0F Ukraine"
     track: false
+
+- cal_id: p07n98go11onamd08d0kmq6jhs@group.calendar.google.com
+  entities:
+  - device_id: home_assistant_devs
+    ignore_availability: true
+    name: Home Assistant Devs
+    track: true
