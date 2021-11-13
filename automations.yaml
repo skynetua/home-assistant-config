@@ -297,10 +297,10 @@
   - type: power
     platform: device
     device_id: e10bdfca6d169338d8cfabbcbb0cd91b
-    entity_id: sensor.toilet_plug_electrical_measurement
+    entity_id: sensor.plug_toilet_electrical_measurement
     domain: sensor
-    above: 5
     id: washing_started
+    above: 5
   - platform: numeric_state
     entity_id: counter.washes
     above: '15'
@@ -319,13 +319,13 @@
         - type: power
           platform: device
           device_id: e10bdfca6d169338d8cfabbcbb0cd91b
-          entity_id: sensor.toilet_plug_electrical_measurement
+          entity_id: sensor.plug_toilet_electrical_measurement
           domain: sensor
           below: 5
           for:
             hours: 0
-            minutes: 1
-            seconds: 0
+            minutes: 0
+            seconds: 30
             milliseconds: 0
         timeout: 03:00:00
       - service: input_boolean.turn_off

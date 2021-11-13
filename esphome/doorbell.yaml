@@ -411,5 +411,3 @@ sensor:
             - binary_sensor.template.publish:
                 id: doorbell_chime
                 state: off
-
-

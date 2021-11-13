@@ -1,8 +1,9 @@
 mikrotik_nat_rules:
   icon: mdi:router-network
   entities:
-    - switch.mikrotik_nat_tcp_443
-    - switch.mikrotik_nat_tcp_80
+    - switch.mikrotik_nat_nginx
+    - switch.mikrotik_nat_nginx_ssl
+    - switch.mikrotik_nat_rdp_to_pc
     - switch.mikrotik_nat_upnp_192_168_88_200_plex_media_server
 living_room_light:
   name: Living Room light
@@ -24,3 +25,36 @@ updates:
     - binary_sensor.home_assistant_operating_system_update_available
     - binary_sensor.mikrotik_firmware_update
     - binary_sensor.hacs_updates
+domofon:
+  name: Domofon
+  icon: mdi:phone-lock
+  entities:
+    - binary_sensor.domofon_incoming_call
+    - switch.domofon_automatically_open
+    - switch.domofon_automatically_open_once
+    - switch.domofon_automatically_reject
+safety:
+  name: Safety
+  icon: mdi:shield-home
+  entities:
+    - binary_sensor.ble_motion_nightlight
+    - binary_sensor.lumi_lumi_sensor_magnet_aq2_on_off
+    - binary_sensor.wleak_toilet
+    - binary_sensor.wleak_kitchen
+    - binary_sensor.toilet_ias_zone
+    - binary_sensor.tambur_motion
+    - binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone
+batteries:
+  name: Batteries
+  icon: mdi:battery-70
+  entities:
+    - sensor.lumi_lumi_sensor_magnet_aq2_power
+    - sensor.lumi_lumi_sensor_motion_aq2_234d5107_power
+    - sensor.lumi_lumi_sensor_motion_aq2_9e693a07_power
+    - sensor.lumi_lumi_sensor_motion_aq2_power
+    - sensor.lumi_lumi_sensor_wleak_aq1_8fbe9d04_power
+    - sensor.lumi_lumi_sensor_wleak_aq1_power
+    - sensor.lumi_lumi_weather_power
+    - sensor.tuyatec_yg5dcbfu_rh3052_f8c3f1fe_power
+    - sensor.ble_battery_clock
+    - sensor.ble_battery_nightlight

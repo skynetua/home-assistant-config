@@ -23,6 +23,5 @@ http:
 logger:
   default: error
   logs: {}
-#    custom_components.tuya_v2: debug
 #    homeassistant.components.mobile_app.webhook: debug
 #    custom_components.ble_monitor: debug
