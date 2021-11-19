@@ -125,6 +125,7 @@ switch:
   - platform: template
     name: ${friendly_name} Setup Switch # Switch to enter Setup Mode
     id: setupswitch
+    entity_category: config
     lambda: |-
       if (id(settingmode) != 0) {
         return true;
@@ -146,6 +147,7 @@ switch:
   - platform: template
     name: ${friendly_name} Setup Button # Switch to replicate the Physical Button
     id: hasetup
+    entity_category: config
     turn_on_action:
       - if: # If settings variable is on
           condition:
@@ -302,3 +304,7 @@ script:
             - globals.set: # Advance setup to next mode
                 id: settingmode
                 value:  '2'
+
+sensor:
+  - <<: !include common/uptime.yaml
+  - <<: !include common/rssi.yaml

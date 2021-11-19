@@ -1,3 +1,4 @@
 - platform: uptime
   name: $friendly_name Uptime
   update_interval: 60s
+  disabled_by_default: true

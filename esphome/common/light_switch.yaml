@@ -7,6 +7,9 @@ binary_sensor:
   - platform: gpio
     pin: $switch_pin
     id: switch_1
+    name: $friendly_name Switch
+    disabled_by_default: true
+    entity_category: diagnostic
     on_state:
       then:
         - light.toggle: light_1

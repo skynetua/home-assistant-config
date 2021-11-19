@@ -338,6 +338,7 @@ binary_sensor:
   # Accept HW button
   - platform: gpio
     name: "Domofon button"
+    entity_category: diagnostic
     id: button
     pin:
       number: $pin_btn_accept
