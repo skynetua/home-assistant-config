@@ -27,7 +27,7 @@ google_assistant:
     switch.office_pc:
       room: Кабинет
       aliases:
-        - "work computer"
+        - "office computer"
         - "work pc"
     light.kitchen:
       name: Свет на кухне

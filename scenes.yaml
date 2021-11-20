@@ -2,6 +2,8 @@
   name: Sleep
   icon: mdi:sleep
   entities:
+    light.light_bedroom_main:
+      state: "off"
     light.wled:
       state: "off"
     light.livingroom_tv:
@@ -24,6 +26,10 @@
   name: Away
   icon: mdi:power
   entities:
+    light.light_bedroom_main:
+      state: "off"
+    light.light_bedroom_spotlights:
+      state: "off"
     light.wled:
       state: "off"
     light.livingroom_tv:
