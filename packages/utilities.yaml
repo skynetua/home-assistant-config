@@ -8,10 +8,10 @@ input_text:
 
 utility_meter:
   energy_used_monthly:
-    source: sensor.tybf80e8022a47e42295doxx
+    source: sensor.wifi_smart_meter_total_energy
     cycle: monthly
   energy_used_yearly:
-    source: sensor.tybf80e8022a47e42295doxx
+    source: sensor.wifi_smart_meter_total_energy
     cycle: yearly
   gas_used_monthly:
     source: sensor.gas_consumption
@@ -34,7 +34,7 @@ template:
         unit_of_measurement: "kWh"
         state_class: total_increasing
         state: >
-          {{ (states('sensor.tybf80e8022a47e42295doxx') | float + 14046.3) }}
+          {{ (states('sensor.wifi_smart_meter_total_energy') | float + 14046.3) }}
       - name: "Total Used Gas"
         unique_id: total_used_gas
         unit_of_measurement: "m³"

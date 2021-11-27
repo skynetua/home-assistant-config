@@ -19,6 +19,9 @@ google_assistant:
       aliases:
         - "телевизор в гостиной"
         - "TV"
+    media_player.samsung_tv:
+      name: Bedroom TV
+      room: Спальня
     switch.pc:
       name: Компьютер
       aliases:
