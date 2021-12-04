@@ -2,7 +2,7 @@ switch:
   - platform: template
     switches:
       pc:
-        value_template: "{{ is_state('switch.home_pc_wol', 'on') }}"
+        value_template: "{{ is_state('switch.livingroom_pc_wol', 'on') }}"
         turn_on:
           service: switch.turn_on
           data:
@@ -15,7 +15,7 @@ switch:
         friendly_name: Livingroom PC
         unique_id: home_livingroom_pc
       office_pc:
-        value_template: "{{ is_state('switch.work_pc_wol', 'on') }}"
+        value_template: "{{ is_state('switch.office_pc_wol', 'on') }}"
         turn_on:
           service: switch.turn_on
           data:
@@ -27,15 +27,14 @@ switch:
             {% endif %}
         friendly_name: Office PC
         unique_id: home_office_pc
-
   - platform: wake_on_lan
-    name: home-pc-wol
-    mac: !secret pc_mac
-    host: !secret pc_ip
+    name: livingroom-pc-wol
+    mac: !secret mac_livingroom_pc
+    host: !secret ip_livingroom_pc
   - platform: wake_on_lan
-    name: work-pc-wol
-    mac: !secret work_pc_mac
-    host: !secret work_pc_ip
+    name: office-pc-wol
+    mac: !secret mac_office_pc
+    host: !secret ip_office_pc
 
 shell_command:
   turn_off_pcu: ssh -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no hass@192.168.88.221 sudo poweroff
@@ -43,8 +42,11 @@ shell_command:
 
 media_player:
   - platform: samsungtv_encrypted
-    name: samsung tv
-    host: 192.168.88.203
+    name: Bedroom TV
+    host: !secret ip_samsung_tv
     token: a42b9e8bb3cf230e0a1b52a5fab444a9
     sessionid: 1
     port: 8080
+  - platform: lg_soundbar
+    host: !secret ip_soundbar
+    port: 9741

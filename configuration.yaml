@@ -19,13 +19,11 @@ scene: !include scenes.yaml
 http:
   use_x_forwarded_for: true
   trusted_proxies:
-    - 172.30.33.1
-    - 192.168.88.200
+    - !secret ip_host
 
 logger:
   default: error
   logs:
     homeassistant.components.discovery: debug
-    homeassistant.components.zeroconf: debug
+#    homeassistant.components.zeroconf: debug
 #    custom_components.ble_monitor: debug
-

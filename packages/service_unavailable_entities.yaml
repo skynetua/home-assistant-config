@@ -37,6 +37,11 @@ group:
   ignored_entities:
     entities:
       - binary_sensor.updater # always unknown after restart
+      - switch.mikrotik_nat_upnp_192_168_88_200_plex_media_server
+      - switch.mikrotik_nat_upnp_192_168_88_200_torrserver
+      - switch.mikrotik_nat_upnp_192_168_88_219_acestream_port_8621_to_8621_21eebb
+      - switch.mikrotik_nat_upnp_192_168_88_220_acestream_port_8621_8622
+      - switch.mikrotik_nat_upnp_192_168_88_220_add_by_homecloud
 
 # OPTIONAL Example automation to demonstrate how you can utilize this sensor
 automation:

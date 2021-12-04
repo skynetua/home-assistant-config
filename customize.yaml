@@ -102,3 +102,5 @@ sensor.plug_livingroom_smartenergy_metering_summation_delivered:
   friendly_name: Compuer Energy usage
 sensor.plug_toilet_smartenergy_metering_summation_delivered:
   friendly_name: Washing Machine Energy usage
+media_player.unnamed_device:
+  icon: mdi:soundbar

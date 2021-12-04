@@ -358,7 +358,7 @@
     to: 'on'
     id: 'on'
   - platform: state
-    entity_id: switch.home_pc_wol
+    entity_id: switch.livingroom_pc_wol
     id: 'off'
     from: 'on'
     to: 'off'
@@ -374,6 +374,16 @@
           device_id: 745d26659dbaf63767790c478ea6288d
         data:
           source: HDMI 3/ARC
+      - service: media_player.select_source
+        target:
+          entity_id: media_player.unnamed_device
+        data:
+          source: HDMI
+      - service: media_player.select_sound_mode
+        target:
+          entity_id: media_player.unnamed_device
+        data:
+          sound_mode: Standard
     - conditions:
       - condition: trigger
         id: 'off'
