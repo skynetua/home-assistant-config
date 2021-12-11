@@ -1,0 +1,43 @@
+substitutions:
+  device_name: espcam
+  friendly_name: ESPCAM
+
+
+packages:
+  base: !include common/base.yaml
+  wifi: !include common/wifi.yaml
+
+esphome:
+  name: ${device_name}
+  platform: ESP32
+  board: esp32dev
+
+sensor:
+  - <<: !include common/uptime.yaml
+  - <<: !include common/rssi.yaml
+  
+# ESP32-CAM
+esp32_camera:
+  external_clock:
+    pin: GPIO0
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO26
+    scl: GPIO27
+  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
+  vsync_pin: GPIO25
+  href_pin: GPIO23
+  pixel_clock_pin: GPIO22
+  power_down_pin: GPIO32
+  name: $device_name
+  # ... Frame Settings
+
+# Flashlight
+output:
+  - platform: gpio
+    pin: GPIO4
+    id: gpio_4
+light:
+  - platform: binary
+    output: gpio_4
+    name: $device_name light  

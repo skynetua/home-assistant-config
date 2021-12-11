@@ -13,7 +13,7 @@
       message: Internet connection was lost for a while
   mode: single
 - id: '1604939660805'
-  alias: Automate - Mute TV on phone call
+  alias: Automate - Mute media on phone call
   description: ''
   trigger:
   - platform: state
@@ -50,7 +50,8 @@
       - service: media_player.media_pause
         target:
           entity_id:
-          - media_player.sony_bravia_tv
+          - media_player.unnamed_device
+          - media_player.kitchen_speaker
       - service: media_player.volume_mute
         data:
           is_volume_muted: true
@@ -66,7 +67,8 @@
           is_volume_muted: false
         target:
           entity_id:
-          - media_player.sony_bravia_tv
+          - media_player.unnamed_device
+          - media_player.kitchen_speaker
       - service: media_player.media_play
         target:
           entity_id:
@@ -242,7 +244,7 @@
       entity_id: input_boolean.mode_guests
       state: 'on'
   action:
-  - service: notify.tts_living_room
+  - service: notify.announce
     data:
       message: "Hey!  {% if (trigger.to_state.attributes.pronunciation != Null) -%}\n\
         \  {{ trigger.to_state.attributes.pronunciation }} \n{%- else -%}\n  {{ trigger.to_state.attributes.friendly_name\
@@ -395,7 +397,8 @@
           entity_id: sensor.plug_livingroom_electrical_measurement
           domain: sensor
           below: 10
-        continue_on_timeout: false
+        continue_on_timeout: true
+        timeout: 00:05:00
       - type: turn_off
         device_id: 62e3dc51c8003849b745749a5717e4c4
         entity_id: switch.plug_livingroom_on_off
@@ -517,7 +520,7 @@
     device_id: 9ad718eb888b0a4aad72cd6cb62d6812
     entity_id: binary_sensor.doorbell_chime
     domain: binary_sensor
-  - type: locked
+  - type: not_locked
     platform: device
     device_id: 9ad718eb888b0a4aad72cd6cb62d6812
     entity_id: binary_sensor.domofon_incoming_call

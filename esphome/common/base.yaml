@@ -8,3 +8,5 @@ api:
 
 ota:
   password: !secret esp_pass
+  safe_mode: true
+  num_attempts: 5

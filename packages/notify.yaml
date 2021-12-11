@@ -16,6 +16,6 @@ notify:
     platform: telegram
     chat_id: !secret telegaram_group_chat_id
   - platform: tts
-    name: tts_living_room
+    name: announce
     tts_service: tts.google_say
-    media_player: media_player.gostinaia
+    media_player: media_player.kitchen_speaker

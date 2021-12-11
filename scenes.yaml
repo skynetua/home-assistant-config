@@ -14,8 +14,10 @@
       state: "off"
     light.toilet_light:
       state: "off"
-    light.kitchen_light:
+    light.kitchen:
       state: "off"
+    light.light_bedroom_spotlight:
+      state: "on"
     media_player.sony_bravia_tv:
       state: "off"
     switch.pc:
@@ -28,11 +30,13 @@
   entities:
     light.light_bedroom_main:
       state: "off"
-    light.light_bedroom_spotlights:
+    light.light_bedroom_spotlight:
       state: "off"
     light.wled:
       state: "off"
     light.livingroom_tv:
+      state: "off"
+    light.kitchen:
       state: "off"
     light.toilet_light:
       state: "off"

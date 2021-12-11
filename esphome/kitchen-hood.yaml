@@ -88,26 +88,6 @@ binary_sensor:
     device_class: gas
     name: Hood Gas
     pin: ${gd_pin}
-  - platform: gpio
-    id: test_bs
-    name: "test bs"
-    pin: 
-      number: $reed_sw_pin
-      mode: INPUT_PULLUP
-    on_press:
-      then:
-      - number.set:
-          id: numb
-          value: !lambda return id(numb).state ++;
-
-number:
-  - platform: template
-    name: "Template number"
-    id: numb
-    optimistic: true
-    min_value: 0
-    max_value: 10000
-    step: 1
 
 switch:
   - platform: gpio

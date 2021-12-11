@@ -23,7 +23,7 @@ http:
 
 logger:
   default: error
-  logs:
-    homeassistant.components.discovery: debug
+  logs: {}
+#    homeassistant.components.discovery: debug
 #    homeassistant.components.zeroconf: debug
 #    custom_components.ble_monitor: debug
