@@ -23,8 +23,13 @@ updates:
   entities:
     - binary_sensor.updater
     - binary_sensor.home_assistant_operating_system_update_available
-    - binary_sensor.mikrotik_firmware_update
+    - binary_sensor.esphome_update_available
+    - binary_sensor.home_assistant_google_drive_backup_update_available
+    - binary_sensor.samba_share_update_available
+    - binary_sensor.ssh_web_terminal_update_available
+    - binary_sensor.visual_studio_code_update_available
     - binary_sensor.hacs_updates
+    - binary_sensor.mikrotik_firmware_update
 domofon:
   name: Domofon
   icon: mdi:phone-lock
@@ -37,6 +42,8 @@ safety:
   name: Safety
   icon: mdi:shield-home
   entities:
+    - binary_sensor.doorbell_chime
+    - binary_sensor.domofon_incoming_call
     - binary_sensor.lumi_lumi_sensor_magnet_aq2_on_off
     - binary_sensor.ty36058618483fda6485fa_3
     - binary_sensor.ble_motion_nightlight

@@ -1,0 +1,2 @@
+shell_command:
+  push_to_github: sh /config/scripts/git_update.sh

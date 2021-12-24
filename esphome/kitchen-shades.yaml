@@ -1,16 +1,20 @@
 substitutions:
   device_name: kitchen-shades
   friendly_name: Kitchen Shades
-  mystepper: stepper2
-  speed: 400 steps/s # Set the speed of the motor
-  s1_pina: D0 # Swap these \_ coil a
-  s1_pinb: D1 # Swap these /
-  s1_pinc: D2 # Swap these \_ coil b
-  s1_pind: D3 # Swap these /
-  s2_pina: D4
-  s2_pinb: D5
-  s2_pinc: D6
-  s2_pind: D8
+  speed: 300 steps/s # Set the speed of the motor
+  lc: cover_left
+  ls: stepper_left
+  ls_pina: D0 # Swap these \_ coil a
+  ls_pinb: D1 # Swap these /
+  ls_pinc: D2 # Swap these \_ coil b
+  ls_pind: D3 # Swap these /
+  rc: cover_right
+  rs: stepper_right
+  rs_pina: D4
+  rs_pinb: D5
+  rs_pinc: D6
+  rs_pind: D8
+
 
 packages:
   base: !include common/base.yaml
@@ -24,61 +28,94 @@ esphome:
   on_boot:
     - priority: -200.0
       then:
-      - stepper.report_position: # Set stepper to global variable
-          id: $mystepper
-          position: !lambda return id(${mystepper}_global);
-      - stepper.set_target: # Set stepper to global variable
-          id: $mystepper
-          target: !lambda return id(${mystepper}_global);
+    # Set steppers to global variables
+      - stepper.report_position: 
+          id: $ls
+          position: !lambda return id(${ls}_position);
+      - stepper.report_position: 
+          id: $rs
+          position: !lambda return id(${rs}_position);
+    # Set stepper to global variable
+      - stepper.set_target: 
+          id: $ls
+          target: !lambda return id(${ls}_position);
+      - stepper.set_target: 
+          id: $rs
+          target: !lambda return id(${rs}_position);          
       - if: # If blind is Closed
           condition:
-            - lambda: 'return id(${mystepper}_global) == 0;'
+            - lambda: 'return id(${ls}_position) == 0;'
           then: # Publish state etc.
             - cover.template.publish:
-                id: right
+                id: $lc
                 state: CLOSED
                 current_operation: IDLE
       - if: # If blind is Open
           condition:
-            - lambda: 'return id(${mystepper}_global) == id(endstop);'
+            - lambda: 'return id(${ls}_position) == id(${ls}_endstop);'
           then: # Publish state etc.
             - cover.template.publish:
-                id: right
+                id: $lc
                 state: OPEN
                 current_operation: IDLE
       - if: # If blind is Neither
           condition:
-            - lambda: 'return (id(${mystepper}_global) != 0) && (id(${mystepper}_global) != id(endstop));'
+            - lambda: 'return (id(${ls}_position) != 0) && (id(${ls}_position) != id(${ls}_endstop));'
           then: #  # Publish state etc.
             - cover.template.publish:
-                id: right
-                position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+                id: $lc
+                position: !lambda 'return (float(float(id($ls).current_position) / float(id(${ls}_endstop))));' 
                 current_operation: IDLE
 
 stepper:
   - platform: uln2003
-    id: $mystepper
-    pin_a: $s1_pina
-    pin_b: $s1_pinb
-    pin_c: $s1_pinc
-    pin_d: $s1_pind
-    max_speed: ${speed} # Speed of the motor
+    id: $ls
+    pin_a: $ls_pina
+    pin_b: $ls_pinb
+    pin_c: $ls_pinc
+    pin_d: $ls_pind
+    max_speed: ${speed}
+    sleep_when_done: True
+    acceleration: inf
+    deceleration: inf
+  - platform: uln2003
+    id: $rs
+    pin_a: $rs_pina
+    pin_b: $rs_pinb
+    pin_c: $rs_pinc
+    pin_d: $rs_pind
+    max_speed: ${speed}
     sleep_when_done: True
     acceleration: inf
     deceleration: inf
 
 globals:
-  - id: ${mystepper}_global # Integer for storing the stepper position in case of reboot
-    type: int
-    restore_value: True
-    initial_value: '0'
-
-  - id: openclosed # Boolean to store OPEN/CLOSED state
+  - id: ${lc}_state # Boolean to store OPEN/CLOSED state
     type: bool
     restore_value: True
     initial_value: '0'
 
-  - id: endstop # Variable for storing ENDSTOP (how far to move stepper)
+  - id: ${rc}_state # Boolean to store OPEN/CLOSED state
+    type: bool
+    restore_value: True
+    initial_value: '0'
+
+  - id: ${ls}_position # Integer for storing the stepper position in case of reboot
+    type: int
+    restore_value: True
+    initial_value: '0'
+
+  - id: ${rs}_position # Integer for storing the stepper position in case of reboot
+    type: int
+    restore_value: True
+    initial_value: '0'
+
+  - id: ${ls}_endstop # Variable for storing ENDSTOP (how far to move stepper)
+    type: int
+    restore_value: True
+    initial_value: '1000'
+
+  - id: ${rs}_endstop # Variable for storing ENDSTOP (how far to move stepper)
     type: int
     restore_value: True
     initial_value: '1000'
@@ -108,7 +145,7 @@ binary_sensor:
             else:
               - if: # If blind is closed
                   condition:
-                    - lambda: 'return id(openclosed) == 0;'
+                    - lambda: 'return id(state_right) == 0;'
                   then: # Open blind
                     - cover.open: right
                   else: # Close blind
@@ -121,65 +158,70 @@ binary_sensor:
             id: settingmode
             value:  '1'
 
-switch:
+select:
   - platform: template
-    name: ${friendly_name} Setup Switch # Switch to enter Setup Mode
-    id: setupswitch
+    id: activeshade
+    name: "Setup Shade"
     entity_category: config
-    lambda: |-
-      if (id(settingmode) != 0) {
-        return true;
-      } else {
-        return false;
-      }
-    turn_on_action:
+    optimistic: true
+    options:
+      - "none"
+      - left
+      - right
+    initial_option: "none"
+    on_value:
       then:
-        - logger.log: "Entered Settings Mode"
-        - globals.set:
-            id: settingmode
-            value:  '1'
-    turn_off_action:
-      then:
-        - logger.log: "Exiting Settings Mode"
-        - globals.set:
-            id: settingmode
-            value:  '0'
+        - if:
+            condition:
+              - lambda: 'return id(activeshade).state != "none";'
+            then:
+              - logger.log:
+                  format: "Entered Settings Mode for the %s shade"
+                  args: ["x.c_str()"]
+              - globals.set:
+                  id: settingmode
+                  value:  '1'
+            else:
+              - logger.log: "Exiting Settings Mode"
+              - globals.set:
+                  id: settingmode
+                  value:  '0'
+button:
   - platform: template
     name: ${friendly_name} Setup Button # Switch to replicate the Physical Button
     id: hasetup
     entity_category: config
-    turn_on_action:
+    on_press:
       - if: # If settings variable is on
           condition:
             - lambda: 'return id(settingmode) != 0;'
           then: # Enter Setting Mode
             - script.execute: setupbutton
-            - switch.turn_off: hasetup
 
 cover:
   - platform: template
     name: $friendly_name Right
-    id: right
+    id: $lc
     open_action:
       then:
         - logger.log: "Opening"
         - stepper.set_target: # Send stepper to endstop
             id: $mystepper
-            target: !lambda return id(endstop);
+            target: !lambda return id(${ls}_endstop);
         - while:
             condition:
-              lambda: 'return id($mystepper).current_position != id(endstop);'
+              lambda: 'return id($mystepper).current_position != id(endstop_right);'
             then:
               - cover.template.publish:
                   id: right
-                  position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+                  position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop_right))));' 
                   current_operation: OPENING
               - delay: 1000 ms
         - globals.set: # Set global to current position
             id: ${mystepper}_global
             value: !lambda return id($mystepper).current_position; 
         - globals.set: # Set toggle to OPEN (No need for 'optimistic mode')
-            id: openclosed
+            id: state_right
             value: '1'
         - cover.template.publish:
             id: right
@@ -197,14 +239,14 @@ cover:
             then:
               - cover.template.publish:
                   id: right
-                  position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+                  position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop_right))));' 
                   current_operation: CLOSING
               - delay: 1000 ms
         - globals.set: # Set global to current position
             id: ${mystepper}_global
             value: !lambda return id($mystepper).current_position; 
         - globals.set: # Set toggle to CLOSED (No need for 'optimistic mode')
-            id: openclosed
+            id: state_right
             value: '0'
         - cover.template.publish:
             id: right
@@ -214,21 +256,21 @@ cover:
       then:
         - stepper.set_target:
             id: $mystepper
-            target: !lambda return int(id(endstop) * pos);
+            target: !lambda return int(id(endstop_right) * pos);
         - while:
             condition:
-              lambda: 'return id($mystepper).current_position != int(id(endstop) * pos);'
+              lambda: 'return id($mystepper).current_position != int(id(endstop_right) * pos);'
             then:
               - cover.template.publish:
                   id: right
-                  position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+                  position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop_right))));' 
               - delay: 1000 ms
         - globals.set: # Set global to current position
             id: ${mystepper}_global
             value: !lambda return id($mystepper).current_position; 
         - cover.template.publish:
             id: right
-            position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+            position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop_right))));' 
             current_operation: IDLE
     stop_action:
       then:
@@ -240,7 +282,7 @@ cover:
             value: !lambda return id($mystepper).current_position;
         - cover.template.publish:
             id: right
-            position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop))));' 
+            position: !lambda 'return (float(float(id($mystepper).current_position) / float(id(endstop_right))));' 
             current_operation: IDLE
     has_position: true
     device_class: shade
@@ -257,7 +299,7 @@ script:
                 id: $mystepper
                 target: !lambda return id($mystepper).current_position;
             - globals.set: # Set Endstop Variable
-                id: endstop
+                id: endstop_right
                 value: !lambda return id($mystepper).current_position;
             - globals.set: # Set Global stepper position
                 id: ${mystepper}_global
@@ -266,7 +308,7 @@ script:
                 id: settingmode
                 value:  '0'
             - globals.set: # Set toggle to Open
-                id: openclosed
+                id: state_right
                 value: '1'
             - cover.template.publish:
                 id: right
