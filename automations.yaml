@@ -758,3 +758,20 @@
           entity_id: automation.light_toilet
     default: []
   mode: single
+- id: '1640355945570'
+  alias: Check and Reload Tuya Integration
+  trigger:
+  - platform: event
+    event_type: system_log_event
+    event_data:
+      level: ERROR
+      name: tuya_iot
+  condition:
+  - condition: template
+    value_template: '{{ "error while get mqtt config" in trigger.event.data.message[0]
+      }}'
+  action:
+  - service: homeassistant.reload_config_entry
+    data: {}
+    target:
+      entity_id: sensor.wifi_smart_meter_phase_a_current
