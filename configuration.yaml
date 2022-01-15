@@ -1,32 +1,22 @@
-homeassistant:
-  customize: !include customize.yaml
-  packages: !include_dir_named packages
-  allowlist_external_dirs:
-    - /config
+default_config:
 
 frontend:
   themes: !include_dir_merge_named themes
   extra_module_url:
     - /hacsfiles/lovelace-card-mod/card-mod.js
 
-default_config:
-
-group: !include groups.yaml
-automation: !include automations.yaml
-script: !include scripts.yaml
-scene: !include scenes.yaml
+homeassistant:
+  customize: !include customize.yaml
+  packages: !include_dir_named packages
+  allowlist_external_dirs:
+    - /config
 
 http:
   use_x_forwarded_for: true
   trusted_proxies:
     - !secret ip_host
 
-logger:
-  default: error
-  logs: {}
-#    homeassistant.components.discovery: debug
-#    homeassistant.components.zeroconf: debug
-#    custom_components.ble_monitor: debug
-
-system_log:
-  fire_event: true
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml

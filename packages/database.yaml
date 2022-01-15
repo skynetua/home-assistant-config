@@ -17,6 +17,7 @@ recorder:
       - vacuum
     entities:
       - device_tracker.sm_g9860
+      - group.safety
     entity_globs: {}
   exclude:
     entities:

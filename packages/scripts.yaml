@@ -1,2 +1,3 @@
 shell_command:
   push_to_github: sh /config/scripts/git_update.sh
+  update_duckdns_ip: curl https://www.duckdns.org/update?domains={{ domains }}&token={{ token }}&ip={{ ip }}

@@ -559,7 +559,7 @@
       title: Someone came
   mode: single
 - id: '1628081966719'
-  alias: Automate - Github Update
+  alias: Automate - Update Github
   description: ''
   trigger:
   - platform: time
@@ -775,3 +775,20 @@
     data: {}
     target:
       entity_id: sensor.wifi_smart_meter_phase_a_current
+- id: '1641822766128'
+  alias: Automate - Update duckdns IP
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.publicip
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: sensor.publicip
+      state: Unknown
+  action:
+  - service: shell_command.update_duckdns_ip
+    data:
+      domains: ddns_domains
+  mode: restart

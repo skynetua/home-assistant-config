@@ -1,0 +1,10 @@
+
+logger:
+  default: error
+  logs: {}
+#    homeassistant.components.discovery: debug
+#    homeassistant.components.zeroconf: debug
+#    custom_components.ble_monitor: debug
+
+system_log:
+  fire_event: true
