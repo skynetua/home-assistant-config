@@ -1,18 +1,21 @@
 substitutions:
-  pin_call_detect: GPIO0
-  pin_btn_accept: GPIO12
+  device_name: domofon
+  friendly_name: Domofon
+  
+  pin_relay_answer: D1
+  pin_relay_open: D2
+  pin_led_red: D4
+  pin_led_green: D3
+  pin_led_blue: D0
+  pin_call_detect: D5
+  pin_btn_accept: D6
 
-  # Relays configuration
+  pin_dorbell_sound: D8
+  pin_dorbell_chime: A0
+  
   relays_inverted: 'true'
-
-  # Wifi credentials
-  wifi_ssid: "3414"
-  wifi_password: "0992827524"
-
-  # OTA and API
-  ota_password: "esphome"
-  api_password: "esphome"
-
+  led_brightness: 100%
+  
   # Software configuration
   call_end_detect_delay: 3000ms     # Interval between rings to detect incoming call
   relay_before_answer_delay: 10ms   # Delay before answer call
@@ -21,68 +24,25 @@ substitutions:
   relay_after_open_delay: 500ms     # Delay in "answer" state after opening door
   short_click_time_from: 50ms       # Short button click min time
   short_click_time_to: 1000ms       # Long button click min time
-
-########### End user configuration ###########
-
-
+  
 esphome:
-  name: domofon
+  name: $device_name
   platform: ESP8266
-  board: esp01_1m
+  board: d1_mini
 
-ota:
-
-wifi:
-  ssid: $wifi_ssid
-  password: $wifi_password
-  fast_connect: on
-
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "Domofon Fallback Hotspot"
-    password: "Pass1234"
-
-captive_portal:
-
-web_server:
-  port: 80
-
-
+packages:
+  wifi: !include common/wifi.yaml
+  base: !include common/base.yaml
+  
 logger:
-  baud_rate: 0 #need this to free up UART pins
+  baud_rate: 0
+  level: DEBUG
+  logs:
+    adc: ERROR
+    sensor: ERROR
 
-uart:
-  baud_rate: 115200 # speed to STC15L101EW
-  tx_pin: GPIO1
-  rx_pin: GPIO3
-
-api:
-  password: $api_password
-  reboot_timeout: 0s
-  services:
-    # Accept call service for Home Assistant
-    - service: accept_call
-      then:
-        - logger.log: "Call service 'Accept Call'"
-        - if:
-            condition:
-              binary_sensor.is_on: incoming_call
-            then:
-              script.execute: call_accept
-            else:
-              logger.log: "No incoming call"
-
-    # Reject call service for Home Assistant
-    - service: reject_call
-      then:
-        - logger.log: "Call service 'Reject Call'"
-        - if:
-            condition:
-              binary_sensor.is_on: incoming_call
-            then:
-              script.execute: call_reject
-            else:
-              logger.log: "No incoming call"
+status_led:
+  pin: $pin_led_blue
 
 script:
   # Accept incoming call
@@ -91,13 +51,13 @@ script:
       - logger.log: "Accept call"
       - script.execute: state_no_call
       - delay: $relay_before_answer_delay
-      - switch.turn_on: relay_answer
+      - output.turn_on: relay_answer
       - delay: $relay_answer_on_time
-      - switch.turn_on: relay_open
+      - output.turn_on: relay_open
       - delay: $relay_open_on_time
-      - switch.turn_off: relay_open
+      - output.turn_off: relay_open
       - delay: $relay_after_open_delay
-      - switch.turn_off: relay_answer
+      - output.turn_off: relay_answer
 
   # Reject incoming call
   - id: call_reject
@@ -105,19 +65,52 @@ script:
       - logger.log: "Reject call"
       - script.execute: state_no_call
       - delay: $relay_before_answer_delay
-      - switch.turn_on: relay_answer
+      - output.turn_on: relay_answer
       - delay: $relay_answer_on_time
-      - switch.turn_off: relay_answer
+      - output.turn_off: relay_answer
 
   # No call state
   - id: state_no_call
     then:
       - logger.log: "Set state 'No call'"
+      - script.execute: led_off
+      - if:
+          condition:
+            switch.is_on: auto_open_once
+          then:
+            script.execute: led_blink_green_1_on
+      - if:
+          condition:
+            switch.is_on: auto_open
+          then:
+            script.execute: led_green_on_soft
+      - if:
+          condition:
+            switch.is_on: auto_reject
+          then:
+            script.execute: led_red_on_soft
+      - if:
+          condition:
+            and:
+              - switch.is_off: auto_open_once
+              - switch.is_off: auto_open
+              - switch.is_off: auto_reject
+          then:
+            script.execute: led_off
 
   # Call state
   - id: state_call
     then:
       - logger.log: "Set state 'Incoming call'"
+      - script.execute: led_off
+      - if:
+          condition:
+            and:
+              - switch.is_off: auto_open
+              - switch.is_off: auto_open_once
+              - switch.is_off: auto_reject
+          then:
+            script.execute: led_blink_red_1_on
       - if:
           condition:
             switch.is_on: auto_reject
@@ -136,10 +129,66 @@ script:
             - delay: 1s
             - switch.turn_off: auto_open_once
 
+  # Permanent blink green led with one flash
+  - id: led_blink_green_1_on
+    then:
+      light.turn_on:
+        id: rgb_led
+        effect: "Blink Green"
+
+  # Once blink green led with one flash
+  - id: led_blink_green_1_once
+    then:
+      - light.turn_on:
+          id: rgb_led
+          brightness: $led_brightness
+          red: 0%
+          green: 100%
+          blue: 0%
+          transition_length: 100ms
+      - delay: 200ms
+      - script.execute: led_off
+
+  # Permanent on green led with soft brightness
+  - id: led_green_on_soft
+    then:
+      light.turn_on:
+        id: rgb_led
+        brightness: $led_brightness
+        red: 0%
+        green: 100%
+        blue: 0%
+        transition_length: 100ms
+
+  # Permanent blink red led with one flash
+  - id: led_blink_red_1_on
+    then:
+      light.turn_on:
+        id: rgb_led
+        effect: "Blink Red"
+
+  # Permanent on red led with soft brightness
+  - id: led_red_on_soft
+    then:
+      light.turn_on:
+        id: rgb_led
+        brightness: $led_brightness
+        red: 100%
+        green: 0%
+        blue: 0%
+        transition_length: 100ms
+
+  # Turn off leds
+  - id: led_off
+    then:
+      light.turn_off:
+        id: rgb_led
+        transition_length: 100ms
+
 switch:
   # Automatically open door switch
   - platform: template
-    name: "Открывать автоматически"
+    name: "Domofon Auto-open"
     id: auto_open
     icon: "mdi:door-open"
     optimistic: true
@@ -153,7 +202,7 @@ switch:
 
   # Automatically open door once switch
   - platform: template
-    name: "Открыть один раз"
+    name: "Domofon Auto-open once"
     id: auto_open_once
     icon: "mdi:door-open"
     optimistic: true
@@ -167,7 +216,7 @@ switch:
 
   # Automatically reject call switch
   - platform: template
-    name: "Отклонять"
+    name: "Domofon  Auto-reject"
     id: auto_reject
     icon: "mdi:door-closed-lock"
     optimistic: true
@@ -178,27 +227,110 @@ switch:
       - script.execute: state_no_call
     on_turn_off:
       script.execute: state_no_call
-
+      
+button:
   - platform: template
+    name: ${friendly_name} Open
+    id: open_now
+    on_press:
+        - if:
+            condition:
+              binary_sensor.is_on: incoming_call
+            then:
+              script.execute: call_accept
+
+# RGB Led (not exported to Home Assistant)
+light:
+  - platform: rgb
+    id: rgb_led
+    name: "Domofon led"
+    internal: true
+    restore_mode: ALWAYS_OFF
+    red: led_red
+    green: led_green
+    blue: led_blue
+    effects:
+      - automation:
+          name: "Blink Green"
+          sequence:
+            - light.turn_on:
+                id: rgb_led
+                brightness: $led_brightness
+                red: 0%
+                green: 100%
+                blue: 0%
+                transition_length: 100ms
+            - delay: 200ms
+            - light.turn_on:
+                id: rgb_led
+                brightness: 1%
+                red: 0%
+                green: 100%
+                blue: 0%
+                transition_length: 100ms
+            - delay: 3000ms
+      - automation:
+          name: "Blink Red"
+          sequence:
+            - light.turn_on:
+                id: rgb_led
+                brightness: $led_brightness
+                red: 100%
+                green: 0%
+                blue: 0%
+                transition_length: 100ms
+            - delay: 500ms
+            - light.turn_on:
+                id: rgb_led
+                brightness: 1%
+                red: 100%
+                green: 0%
+                blue: 0%
+                transition_length: 100ms
+            - delay: 500ms
+
+output:
+  # Red LED
+  - platform: esp8266_pwm
+    id: led_red
+    pin:
+      number: $pin_led_red
+      mode: OUTPUT
+
+  # Green LED
+  - platform: esp8266_pwm
+    id: led_green
+    pin:
+      number: $pin_led_green
+      mode: OUTPUT
+
+  # Blue LED
+  - platform: esp8266_pwm
+    id: led_blue
+    pin:
+      number: $pin_led_blue
+      mode: OUTPUT
+
+  # Relay answer
+  - platform: gpio
     id: relay_answer
-    turn_on_action:
-      - uart.write: [0xA0, 0x01, 0x01, 0xA2]
-    turn_off_action:
-      - uart.write: [0xA0, 0x01, 0x00, 0xA1]
-    optimistic: true
-  - platform: template
-    id: relay_open
-    turn_on_action:
-      - uart.write: [0xA0, 0x02, 0x01, 0xA3]
-    turn_off_action:
-      - uart.write: [0xA0, 0x02, 0x00, 0xA2]
-    optimistic: true
+    pin:
+      number: $pin_relay_answer
+      mode: OUTPUT
+      inverted: $relays_inverted
 
+  # Relay door open
+  - platform: gpio
+    id: relay_open
+    pin:
+      number: $pin_relay_open
+      mode: OUTPUT
+      inverted: $relays_inverted
 
 binary_sensor:
   # Call detection
   - platform: gpio
-    name: "Domofon incoming call"
+    name: "Domofon"
     id: incoming_call
     device_class: lock
     pin:
@@ -217,7 +349,8 @@ binary_sensor:
   # Accept HW button
   - platform: gpio
     name: "Domofon button"
-    id: button
+    internal: True
+    id: button1
     pin:
       number: $pin_btn_accept
       mode: INPUT_PULLUP
@@ -261,3 +394,32 @@ binary_sensor:
               - switch.turn_off: auto_open
               - switch.turn_off: auto_open_once
               - switch.turn_off: auto_reject
+              - script.execute: led_blink_green_1_once
+
+  - platform: template
+    name: Doorbell
+    id: doorbell_chime
+    device_class: sound
+
+sensor:
+  - <<: !include common/uptime.yaml
+  - <<: !include common/rssi.yaml
+  - platform: adc
+    id: doorbell_chime_voltage
+    pin: $pin_dorbell_chime
+    update_interval: 0.5s
+    internal: true
+    on_value_range:
+      above: 0.1
+      then:
+        if:
+          condition:
+            binary_sensor.is_off: doorbell_chime
+          then:
+            - binary_sensor.template.publish:
+                id: doorbell_chime
+                state: on
+            - delay: 5s
+            - binary_sensor.template.publish:
+                id: doorbell_chime
+                state: off

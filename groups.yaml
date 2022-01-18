@@ -34,10 +34,10 @@ domofon:
   name: Domofon
   icon: mdi:phone-lock
   entities:
-    - binary_sensor.domofon_incoming_call
-    - switch.domofon_automatically_open
-    - switch.domofon_automatically_open_once
-    - switch.domofon_automatically_reject
+    - binary_sensor.domofon
+    - switch.domofon_auto_open
+    - switch.domofon_auto_open_once
+    - switch.domofon_auto_reject
 safety:
   name: Safety
   icon: mdi:shield-home
