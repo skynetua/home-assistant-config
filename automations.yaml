@@ -34,13 +34,6 @@
   - condition: state
     entity_id: person.oleksandr
     state: home
-  - condition: not
-    conditions:
-    - condition: device
-      device_id: 745d26659dbaf63767790c478ea6288d
-      domain: media_player
-      entity_id: media_player.sony_bravia_tv
-      type: is_off
   action:
   - choose:
     - conditions:
@@ -50,14 +43,14 @@
       - service: media_player.media_pause
         target:
           entity_id:
-          - media_player.unnamed_device
           - media_player.kitchen_speaker
+          - media_player.sony_bravia_tv
+          - media_player.soundbar
       - service: media_player.volume_mute
         data:
           is_volume_muted: true
         target:
-          entity_id:
-          - media_player.sony_bravia_tv
+          entity_id: media_player.unnamed_device
     - conditions:
       - condition: trigger
         id: idle
@@ -68,11 +61,12 @@
         target:
           entity_id:
           - media_player.unnamed_device
-          - media_player.kitchen_speaker
       - service: media_player.media_play
         target:
           entity_id:
           - media_player.sony_bravia_tv
+          - media_player.soundbar
+          - media_player.kitchen_speaker
     default: []
   mode: single
 - id: '1613122603515'
@@ -516,17 +510,16 @@
   action:
   - delay:
       hours: 0
-      minutes: 1
-      seconds: 0
+      minutes: 0
+      seconds: 30
       milliseconds: 0
   - condition: state
     entity_id: binary_sensor.lumi_lumi_sensor_magnet_aq2_on_off
     state: 'off'
     for:
       hours: 0
-      minutes: 2
+      minutes: 1
       seconds: 0
-      milliseconds: 0
   - service: notify.telegram
     data:
       message: 'There is motion in tambur right now. '
@@ -536,16 +529,14 @@
   alias: Notification - Doorbell or domofon
   description: ''
   trigger:
-  - type: sound
-    platform: device
-    device_id: 9ad718eb888b0a4aad72cd6cb62d6812
-    entity_id: binary_sensor.doorbell_chime
-    domain: binary_sensor
-  - type: not_locked
-    platform: device
-    device_id: 9ad718eb888b0a4aad72cd6cb62d6812
-    entity_id: binary_sensor.domofon_incoming_call
-    domain: binary_sensor
+  - platform: state
+    entity_id: binary_sensor.domofon
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.doorbell
+    from: 'off'
+    to: 'on'
   condition:
   - condition: not
     conditions:
@@ -556,7 +547,7 @@
   - service: notify.telegram
     data:
       message: 🔔 {{ trigger.to_state.attributes.friendly_name }} is ringing
-      title: Someone came
+      title: Someone came!
   mode: single
 - id: '1628081966719'
   alias: Automate - Update Github
