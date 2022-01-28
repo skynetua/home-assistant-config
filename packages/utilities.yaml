@@ -7,12 +7,6 @@ input_text:
     icon: mdi:water
 
 utility_meter:
-  energy_used_monthly:
-    source: sensor.wifi_smart_meter_total_energy
-    cycle: monthly
-  energy_used_yearly:
-    source: sensor.wifi_smart_meter_total_energy
-    cycle: yearly
   gas_used_monthly:
     source: sensor.gas_consumption
     cycle: monthly
@@ -28,13 +22,6 @@ utility_meter:
 
 template:
   - sensor:
-      - name: "Total Used Energy"
-        unique_id: total_used_energy
-        device_class: energy
-        unit_of_measurement: "kWh"
-        state_class: total_increasing
-        state: >
-          {{ (states('sensor.wifi_smart_meter_total_energy') | float + 14046.3) }}
       - name: "Total Used Gas"
         unique_id: total_used_gas
         unit_of_measurement: "m³"
@@ -49,15 +36,6 @@ template:
         state_class: total_increasing
         state: >
           {{ (states('input_text.water_kitchen') | float + states('input_text.water_toilet') | float) }}
-      - name: "Energy Tariff"
-        state: >
-          {% if (states.sensor.energy_used_monthly.state | float < 250 )  -%}
-            {{ 1.44 }}
-          {%- else -%}
-            {{ 1.68 }}
-          {%- endif %}
-        device_class: monetary
-        unit_of_measurement: "UAH/kWh"
       - name: "Gas Tariff"
         state: 7.99
         device_class: monetary

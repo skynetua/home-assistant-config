@@ -1,0 +1,85 @@
+template:
+  - sensor:
+      - name: "Total Used Energy"
+        unique_id: total_used_energy
+        device_class: energy
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        state: >
+          {{ (states('sensor.wifi_smart_meter_total_energy') | float + 14046.3) }}
+      - name: "Energy Tariff"
+        state: >
+          {% if (states.sensor.energy_used_monthly.state | float < 250 )  -%}
+            {{ 1.44 }}
+          {%- else -%}
+            {{ 1.68 }}
+          {%- endif %}
+        device_class: monetary
+        unit_of_measurement: "UAH/kWh"
+
+sensor:
+  # https://github.com/bramstroker/homeassistant-powercalc
+  - platform: powercalc
+    create_group: Livingroom TV Light
+    entities:
+      - entity_id: light.wled
+        wled:
+          voltage: 5
+      - entity_id: light.livingroom_tv
+        fixed:
+          power: 9
+  - platform: powercalc
+    entity_id: light.corridor
+    fixed:
+      power: 6
+  - platform: powercalc
+    entity_id: light.toilet_light
+    fixed:
+      power: 6
+  - platform: powercalc
+    entity_id: light.office_light
+    fixed:
+      power: 12
+  - platform: powercalc
+    create_group: Kitchen Light
+    entities:
+      - entity_id: light.kitchen
+        fixed:
+          power: 66
+      - entity_id: light.kitchen_hood_light
+        fixed:
+          power: 10
+  - platform: powercalc
+    create_group: Bedroom Light
+    entities:
+      - entity_id: light.light_bedroom_main
+        fixed:
+          power: 30
+      - entity_id: light.light_bedroom_spotlight
+        fixed:
+          power: 9
+  - platform: powercalc
+    entity_id: light.tambur
+    manufacturer: aqara
+    model: ZNLDP12LM
+
+  - platform: powercalc
+    name: Fridge energy
+    daily_fixed_energy:
+      value: 0.831
+  - platform: powercalc
+    name: AC energy
+    entity_id: climate.1e476dd8
+    fixed:
+      states_power:
+        heat: 2800
+        cool: 2600
+    standby_power: 1
+
+utility_meter:
+  energy_used_monthly:
+    source: sensor.wifi_smart_meter_total_energy
+    cycle: monthly
+  energy_used_yearly:
+    source: sensor.wifi_smart_meter_total_energy
+    cycle: yearly
