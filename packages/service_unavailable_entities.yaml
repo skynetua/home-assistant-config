@@ -33,7 +33,7 @@ template:
           entities: >
             {% set ignore_sec = 60 %}
             {% set unavail = namespace(entities=[]) %}
-            {% set entities = states|rejectattr('domain','eq','group')|rejectattr('domain','eq','button')
+            {% set entities = states|rejectattr('domain','in', ['group', 'button', 'scene'])
               |rejectattr('entity_id','in',state_attr('group.ignored_entities','entity_id'))
               |selectattr('state','in',['unavailable','unknown'])|map(attribute='entity_id')|list %}
             {% for item in entities %}

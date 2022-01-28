@@ -88,10 +88,6 @@ binary_sensor.lumi_lumi_sensor_magnet_aq2_on_off:
 switch.office_pc:
   icon: mdi:desktop-classic
   device_class: switch
-counter.washes:
-  templates:
-    icon_color: if (state < 10) return 'var(--secondary-text-color)'; else return
-      'yellow';
 sensor.twitch_lenagol0vach:
   pronunciation: LenaGolovach
 sensor.twitch_guit88man:
@@ -99,8 +95,8 @@ sensor.twitch_guit88man:
 sensor.twitch_cahchec:
   pronunciation: sanches
 sensor.plug_livingroom_smartenergy_metering_summation_delivered:
-  friendly_name: Computer Energy usage
+  friendly_name: Computer energy
 sensor.plug_toilet_smartenergy_metering_summation_delivered:
-  friendly_name: Washing Machine Energy usage
+  friendly_name: Washing Machine energy
 media_player.unnamed_device:
   icon: mdi:soundbar

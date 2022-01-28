@@ -16,8 +16,6 @@ sensor:
     resource: http://192.168.88.200:61208/api/3/uptime
     name: Nuc Uptime
     scan_interval: 600
-  - platform: dnsip
-    name: publicip
 
 binary_sensor:
   - platform: ping

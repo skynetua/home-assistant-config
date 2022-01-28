@@ -10,7 +10,7 @@ recorder:
       - input_boolean
       - input_text
       - light
-      - media-player
+      - media_player
       - script
       - sensor
       - switch
