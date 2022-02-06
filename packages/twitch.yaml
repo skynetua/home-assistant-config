@@ -9,6 +9,7 @@ sensor:
       - UncleBjorn
       - SilverName
       - lenagol0vach
+      - verni_shavermy
 
 script:
   cast_twitch_stream:

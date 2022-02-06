@@ -222,7 +222,8 @@
   description: Twitch stream announces on speaker
   trigger:
   - platform: state
-    entity_id: sensor.twitch_guit88man,sensor.twitch_cahchec,sensor.twitch_unclebjorn,sensor.twitch_silvername,sensor.twitch_lenagol0vach
+    entity_id: sensor.twitch_guit88man, sensor.twitch_cahchec, sensor.twitch_unclebjorn,
+      sensor.twitch_silvername, sensor.twitch_lenagol0vach, sensor.twitch_verni_shavermy
     to: streaming
     for: 0:00:30
   condition:
@@ -384,6 +385,11 @@
       - condition: trigger
         id: 'off'
       sequence:
+      - service: media_player.select_source
+        data:
+          source: Optical/HDMI ARC
+        target:
+          entity_id: media_player.unnamed_device
       - wait_for_trigger:
         - type: power
           platform: device
