@@ -50,3 +50,13 @@ media_player:
   - platform: lg_soundbar
     host: !secret ip_soundbar
     port: 9741
+
+homeassistant:
+  customize:
+    switch.office_pc:
+      icon: mdi:desktop-classic
+    switch.pc:
+      icon: mdi:desktop-tower
+    media_player.unnamed_device:
+      icon: mdi:soundbar
+      name: Soundbar

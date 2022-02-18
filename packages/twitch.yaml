@@ -3,6 +3,7 @@ sensor:
     entity_namespace: twitch
     client_id: !secret twitch_client_id
     token: !secret twitch_token
+    scan_interval: 120
     channels:
       - guit88man
       - cahchec
@@ -10,6 +11,17 @@ sensor:
       - SilverName
       - lenagol0vach
       - verni_shavermy
+
+homeassistant:
+  customize:
+    sensor.twitch_lenagol0vach:
+      pronunciation: LenaGolovach
+    sensor.twitch_guit88man:
+      pronunciation: guitman
+    sensor.twitch_cahchec:
+      pronunciation: sanches
+    sensor.twitch_verni_shavermy:
+      pronunciation: phill
 
 script:
   cast_twitch_stream:

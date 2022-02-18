@@ -28,3 +28,9 @@ sensor:
   - platform: filesize
     file_paths:
       - "/config/home-assistant_v2.db"
+
+homeassistant:
+  customize:
+    sensor.home_assistant_v2_db:
+      friendly_name: HA Internal
+      icon: mdi:database

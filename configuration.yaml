@@ -6,7 +6,6 @@ frontend:
     - /hacsfiles/lovelace-card-mod/card-mod.js
 
 homeassistant:
-  customize: !include customize.yaml
   packages: !include_dir_named packages
   allowlist_external_dirs:
     - /config

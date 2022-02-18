@@ -68,7 +68,7 @@ sensor:
     daily_fixed_energy:
       value: 0.831
   - platform: powercalc
-    name: AC energy
+    name: AC
     entity_id: climate.1e476dd8
     fixed:
       states_power:
@@ -83,3 +83,10 @@ utility_meter:
   energy_used_yearly:
     source: sensor.wifi_smart_meter_total_energy
     cycle: yearly
+
+homeassistant:
+  customize:
+    sensor.plug_livingroom_smartenergy_metering_summation_delivered:
+      friendly_name: Computer energy
+    sensor.plug_toilet_smartenergy_metering_summation_delivered:
+      friendly_name: Washing Machine energy

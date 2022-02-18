@@ -32,3 +32,8 @@ template:
         device_class: update
         attributes:
           repositories: "{{ states.sensor.hacs.attributes.repositories }}"
+
+homeassistant:
+  customize:
+    sensor.nuc_uptime:
+      icon: mdi:clock
