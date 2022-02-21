@@ -241,10 +241,10 @@
   action:
   - service: notify.announce
     data:
-      message: "Hey!  {% if (trigger.to_state.attributes.pronunciation != Null) -%}\n\
+      message: "Hey!   {% if (trigger.to_state.attributes.pronunciation != Null) -%}\n\
         \  {{ trigger.to_state.attributes.pronunciation }} \n{%- else -%}\n  {{ trigger.to_state.attributes.friendly_name\
-        \ }}\n{%- endif %} is started streaming {{ trigger.to_state.attributes.game\
-        \ }}  on twitch tv"
+        \ }}\n{%- endif %}  has started streaming {{ trigger.to_state.attributes.game\
+        \ }} on twitch tv"
   mode: single
 - id: '1613124704897'
   alias: Mode - Sleep

@@ -6,5 +6,5 @@ logger:
 #    homeassistant.components.zeroconf: debug
 #    custom_components.ble_monitor: debug
 
-system_log:
-  fire_event: true
+#system_log:
+#  fire_event: true
