@@ -148,22 +148,7 @@ sensor:
     accuracy_decimals: 2
     state_class: total_increasing
     device_class: gas
-  - platform: pulse_meter
-    pin: 
-      number: $reed_sw_pin
-      mode: INPUT_PULLUP
-    unit_of_measurement: 'm³'
-    state_class: total_increasing
-    device_class: gas
-    name: 'Gas Usage'
-    filters:
-      - multiply: 0.01
-    total:
-      name: "Gas Usage Total"
-      unit_of_measurement: "m³"
-      accuracy_decimals: 2
-      state_class: total_increasing
-      device_class: gas
+
 
 light:
   - platform: binary
@@ -191,17 +176,17 @@ output:
             - switch.turn_off: relay3
       - if:
           condition:
-            lambda: return ((state > 0) && (state < .34));
+            lambda: return ((state > 0) && (state <= .34));
           then:
             - switch.turn_on: relay1
       - if:
           condition:
-            lambda: return ((state > .34) && (state < .7));
+            lambda: return ((state > .34) && (state <= .7));
           then:
             - switch.turn_on: relay2
       - if:
           condition:
-            lambda: return ((state == 1));
+            lambda: return ((state > .7) && (state <= 1));
           then:
             - switch.turn_on: relay3
   - platform: gpio
