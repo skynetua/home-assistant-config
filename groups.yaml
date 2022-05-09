@@ -17,19 +17,6 @@ kitchen_shades:
   entities:
     - cover.kitchen_shades_left
     - cover.kitchen_shades_right
-updates:
-  name: Uidates Available
-  icon: mdi:package
-  entities:
-    - binary_sensor.updater
-    - binary_sensor.home_assistant_operating_system_update_available
-    - binary_sensor.esphome_update_available
-    - binary_sensor.home_assistant_google_drive_backup_update_available
-    - binary_sensor.samba_share_update_available
-    - binary_sensor.ssh_web_terminal_update_available
-    - binary_sensor.visual_studio_code_update_available
-    - binary_sensor.hacs_updates
-    - binary_sensor.mikrotik_firmware_update
 domofon:
   name: Domofon
   icon: mdi:phone-lock

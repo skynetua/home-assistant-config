@@ -8,7 +8,6 @@ sensor:
       - type: disk_use_percent
         arg: /
       - type: memory_use_percent
-      - type: last_boot
       - type: disk_free
         arg: /
   - platform: rest
@@ -23,15 +22,6 @@ binary_sensor:
     name: "Internet Connection"
     count: 2
     scan_interval: 60
-
-template:
-  - binary_sensor:
-      - name: HACS Updates
-        icon: hacs:hacs
-        state: "{{ states.sensor.hacs.state | int > 0 }}"
-        device_class: update
-        attributes:
-          repositories: "{{ states.sensor.hacs.attributes.repositories }}"
 
 homeassistant:
   customize:

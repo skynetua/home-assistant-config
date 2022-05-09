@@ -9,7 +9,7 @@ template:
           {{ (states('sensor.wifi_smart_meter_total_energy') | float + 14046.3) }}
       - name: "Energy Tariff"
         state: >
-          {% if (states.sensor.energy_used_monthly.state | float < 250 )  -%}
+          {% if (states.sensor.energy_monthly.state | float < 250 )  -%}
             {{ 1.44 }}
           {%- else -%}
             {{ 1.68 }}
@@ -75,14 +75,6 @@ sensor:
         heat: 2800
         cool: 2600
     standby_power: 1
-
-utility_meter:
-  energy_used_monthly:
-    source: sensor.wifi_smart_meter_total_energy
-    cycle: monthly
-  energy_used_yearly:
-    source: sensor.wifi_smart_meter_total_energy
-    cycle: yearly
 
 homeassistant:
   customize:
