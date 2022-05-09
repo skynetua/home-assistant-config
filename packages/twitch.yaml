@@ -2,6 +2,7 @@ sensor:
   - platform: twitch
     entity_namespace: twitch
     client_id: !secret twitch_client_id
+    client_secret: !secret twitch_secret
     token: !secret twitch_token
     scan_interval: 120
     channels:
