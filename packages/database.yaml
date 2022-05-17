@@ -15,7 +15,9 @@ recorder:
       - sensor
       - switch
       - vacuum
+      - update
     entities:
+      - alarm_control_panel.alarmo
       - device_tracker.sm_g9860
       - group.safety
     entity_globs: {}

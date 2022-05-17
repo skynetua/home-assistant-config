@@ -48,10 +48,6 @@ google_assistant:
       name: Кондиционер
       aliases:
         - "AC"
-    input_boolean.mode_sleep:
-      name: Sleep Mode
-    input_boolean.mode_away:
-      name: Away Mode
     fan.kitchen_hood_fan:
       name: Hood Fan
     light.kitchen_hood_light:
@@ -60,3 +56,12 @@ google_assistant:
       name: Shades
     cover.kitchen_shades_right:
       name: Shades
+    alarm_control_panel.alarmo:
+      name: Alarm
+      room: Home
+    scene.away:
+      name: Away Scene
+      room: Home
+    scene.sleep:
+      name: Sleep Scene
+      room: Home

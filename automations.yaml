@@ -188,35 +188,6 @@
       entity_id: light.corridor
       domain: light
   mode: restart
-- id: '1613123129721'
-  alias: Mode - Away
-  description: ''
-  trigger:
-  - platform: state
-    entity_id: input_boolean.mode_away
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.mode_away
-        state: 'on'
-      sequence:
-      - scene: scene.away
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.mode_away
-        state: 'off'
-      - condition: sun
-        after: sunset
-      sequence:
-      - service: light.turn_on
-        target:
-          area_id: gostinaia
-        data:
-          transition: 5
-    default: []
-  mode: single
 - id: '1613123951160'
   alias: 'Announce - Twitch '
   description: Twitch stream announces on speaker
@@ -230,14 +201,16 @@
   - condition: state
     entity_id: person.oleksandr
     state: home
-  - condition: not
+  - condition: and
     conditions:
-    - condition: state
-      entity_id: input_boolean.mode_sleep
-      state: 'on'
+    - condition: device
+      device_id: d086754273f9ac4fe74073de26ecd1db
+      domain: alarm_control_panel
+      entity_id: alarm_control_panel.alarmo
+      type: is_disarmed
     - condition: state
       entity_id: input_boolean.mode_guests
-      state: 'on'
+      state: 'off'
   action:
   - service: notify.announce
     data:
@@ -245,17 +218,6 @@
         \  {{ trigger.to_state.attributes.pronunciation }} \n{%- else -%}\n  {{ trigger.to_state.attributes.friendly_name\
         \ }}\n{%- endif %}  has started streaming {{ trigger.to_state.attributes.game\
         \ }} on twitch tv"
-  mode: single
-- id: '1613124704897'
-  alias: Mode - Sleep
-  description: ''
-  trigger:
-  - platform: state
-    entity_id: input_boolean.mode_sleep
-    to: 'on'
-  condition: []
-  action:
-  - scene: scene.sleep
   mode: single
 - id: '1613124857885'
   alias: Notification - Utility Meters Reminder
@@ -503,58 +465,6 @@
       title: 📱 New device connected to Wi-Fi network!
   mode: queued
   max: 10
-- id: '1627908810286'
-  alias: Notification - Motion in tambur
-  description: ''
-  trigger:
-  - type: motion
-    platform: device
-    device_id: fbd4f134ea563fe78c23306dac509515
-    entity_id: binary_sensor.tambur_motion
-    domain: binary_sensor
-  condition: []
-  action:
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 30
-      milliseconds: 0
-  - condition: state
-    entity_id: binary_sensor.lumi_lumi_sensor_magnet_aq2_on_off
-    state: 'off'
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-  - service: notify.telegram
-    data:
-      message: 'There is motion in tambur right now. '
-      title: 🚶‍♂️ Motion detected
-  mode: single
-- id: '1627909125055'
-  alias: Notification - Doorbell or domofon
-  description: ''
-  trigger:
-  - platform: state
-    entity_id: binary_sensor.domofon
-    from: 'off'
-    to: 'on'
-  - platform: state
-    entity_id: binary_sensor.doorbell
-    from: 'off'
-    to: 'on'
-  condition:
-  - condition: not
-    conditions:
-    - condition: zone
-      entity_id: person.oleksandr
-      zone: zone.home
-  action:
-  - service: notify.telegram
-    data:
-      message: 🔔 {{ trigger.to_state.attributes.friendly_name }} is ringing
-      title: Someone came!
-  mode: single
 - id: '1628081966719'
   alias: Automate - Update Github
   description: ''
@@ -578,9 +488,13 @@
     entity_id: binary_sensor.toilet_ias_zone
     domain: binary_sensor
   condition:
-  - condition: state
-    entity_id: input_boolean.mode_sleep
-    state: 'off'
+  - condition: not
+    conditions:
+    - condition: device
+      device_id: d086754273f9ac4fe74073de26ecd1db
+      domain: alarm_control_panel
+      entity_id: alarm_control_panel.alarmo
+      type: is_armed_night
   action:
   - type: turn_on
     device_id: 095f00f37cf8b0d04ac9893668ac504b
@@ -789,3 +703,81 @@
     data:
       domains: ddns_domains
   mode: restart
+- id: '1651817681133'
+  alias: Notification - Doorbell or domofon (Duplicate)
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.domofon
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.doorbell
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - service: script.notify
+    data:
+      message: 🔔 {{ trigger.to_state.attributes.friendly_name }} is ringing
+      title: Someone came!
+  mode: single
+- id: '1652775385405'
+  alias: Alarm
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - alarm_control_panel.alarmo
+    from: armed_away
+    to: disarmed
+    id: back_home
+  - platform: device
+    device_id: d086754273f9ac4fe74073de26ecd1db
+    domain: alarm_control_panel
+    entity_id: alarm_control_panel.alarmo
+    type: arming
+    id: arming
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: arming
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: alarm_control_panel.alarmo
+            attribute: arm_mode
+            state: armed_away
+          sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: scene.away
+            metadata: {}
+        - conditions:
+          - condition: state
+            entity_id: alarm_control_panel.alarmo
+            attribute: arm_mode
+            state: armed_night
+          sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: scene.sleep
+            metadata: {}
+        default: []
+    - conditions:
+      - condition: trigger
+        id: back_home
+      - condition: sun
+        after: sunset
+      sequence:
+      - service: light.turn_on
+        data: {}
+        target:
+          entity_id:
+          - light.livingroom_tv
+          - light.wled
+    default: []
+  mode: single

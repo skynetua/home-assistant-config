@@ -24,8 +24,6 @@
       state: "off"
     switch.office_pc:
       state: "off"
-    input_boolean.mode_away:
-      state: "off"
 - id: "1611782046067"
   name: Away
   icon: mdi:power
@@ -51,6 +49,4 @@
     media_player.sony_bravia_tv:
       state: "off"
     switch.pc:
-      state: "off"
-    input_boolean.mode_sleep:
       state: "off"
