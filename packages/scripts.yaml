@@ -1,3 +1,9 @@
 shell_command:
-  push_to_github: /bin/bash /config/shell_scripts/git_update.sh
+  push_to_github: /bin/bash /config/packages/shell_scripts/git_update.sh
   update_duckdns_ip: curl https://www.duckdns.org/update?domains={{ domains }}&token={{ token }}&ip={{ ip }}
+
+binary_sensor:
+  - platform: command_line
+    name: Push to github failed
+    command: "/bin/grep error /config/packages/shell_scripts/git.log  > /dev/null && (echo ON) || (echo OFF)"
+    device_class: problem
