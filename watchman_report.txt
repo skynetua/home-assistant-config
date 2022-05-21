@@ -1,0 +1,150 @@
+-== Watchman Report ==- 
+
+-== Congratulations, all 30 services from your config are available!
+
+-== Missing 80 entity(ies) from 250 found in your config:
++--------------------------------+---------+--------------------------------------------------------------+
+| Entity ID                      | State   | Location                                                     |
++--------------------------------+---------+--------------------------------------------------------------+
+| light.wled ('WLED')            | unavail | scenes.yaml:7,35                                             |
+| light.office_desk_light        | unavail | scenes.yaml:13,45                                            |
+| ('Office Desk Light')          |         |                                                              |
+| media_player.googlehome3251    | missing | scenes.yaml:47                                               |
+| switch.mikrotik_nat_upnp_192_1 | unavail | groups.yaml:7                                                |
+| 68_88_200_plex_media_server    |         |                                                              |
+| ('Mikrotik NAT upnp            |         |                                                              |
+| 192.168.88.200: Plex Media     |         |                                                              |
+| Server')                       |         |                                                              |
+| binary_sensor.doorbell_chime   | missing | groups.yaml:32                                               |
+| binary_sensor.domofon_incoming | missing | groups.yaml:33                                               |
+| _call                          |         |                                                              |
+| binary_sensor.ty36058618483fda | missing | groups.yaml:35                                               |
+| 6485fa_3                       |         |                                                              |
+| sensor.publicip                | missing | automations.yaml:709,714                                     |
+| alarm_control_panel.alarm      | missing | custom_components/alarmo/services.yaml:9,59                  |
+| camera.front_door              | missing | custom_components/browser_mod/services.yaml:47               |
+| light.kitchen_hood_light       | unavail | packages/energy.yaml:49                                      |
+| ('Kitchen Hood Light')         |         |                                                              |
+| sensor.gas_consumption ('Gas   | unavail | packages/utilities.yaml:11,14                                |
+| Consumption')                  |         |                                                              |
+| sensor.home_assistant_v2_db    | missing | packages/database.yaml:26                                    |
+| switch.pc_sw                   | missing | packages/devices.yaml:22                                     |
+| media_player.samsung_tv        | missing | packages/google.yaml:22                                      |
+| fan.kitchen_hood_fan ('Kitchen | unavail | packages/google.yaml:51                                      |
+| Hood Fan')                     |         |                                                              |
+| binary_sensor.updater          | unavail | packages/external/unavailable_entities.yaml:51               |
+| ('Updater')                    |         |                                                              |
+| switch.mikrotik_nat_upnp_192_1 | unavail | packages/external/unavailable_entities.yaml:53               |
+| 68_88_200_torrserver           |         |                                                              |
+| ('Mikrotik NAT upnp            |         |                                                              |
+| 192.168.88.200: TorrServer')   |         |                                                              |
+| switch.mikrotik_nat_upnp_192_1 | unavail | packages/external/unavailable_entities.yaml:54               |
+| 68_88_200_torrserver_2         |         |                                                              |
+| ('Mikrotik NAT upnp            |         |                                                              |
+| 192.168.88.200: TorrServer')   |         |                                                              |
+| switch.mikrotik_nat_upnp_192_1 | missing | packages/external/unavailable_entities.yaml:55               |
+| 68_88_219_acestream_port_8621_ |         |                                                              |
+| to_8621_21eebb                 |         |                                                              |
+| switch.mikrotik_nat_upnp_192_1 | missing | packages/external/unavailable_entities.yaml:56               |
+| 68_88_220_acestream_port_8621_ |         |                                                              |
+| 8622                           |         |                                                              |
+| switch.mikrotik_nat_upnp_192_1 | missing | packages/external/unavailable_entities.yaml:57               |
+| 68_88_220_add_by_homecloud     |         |                                                              |
+| media_player.plex_plex_for_and | missing | packages/external/unavailable_entities.yaml:58               |
+| roid_tv_bravia_4k_gb_atv3      |         |                                                              |
+| media_player.samsung_tv_dmr    | unavail | packages/external/unavailable_entities.yaml:59               |
+| ('Samsung TV DMR')             |         |                                                              |
+| binary_sensor.octoprint_printi | unavail | packages/external/unavailable_entities.yaml:60               |
+| ng ('OctoPrint Printing')      |         |                                                              |
+| binary_sensor.octoprint_printi | unavail | packages/external/unavailable_entities.yaml:61               |
+| ng_error ('OctoPrint Printing  |         |                                                              |
+| Error')                        |         |                                                              |
+| sensor.octoprint_actual_bed_te | unavail | packages/external/unavailable_entities.yaml:62               |
+| mp ('OctoPrint actual bed      |         |                                                              |
+| temp')                         |         |                                                              |
+| sensor.octoprint_actual_tool0_ | unavail | packages/external/unavailable_entities.yaml:63               |
+| temp ('OctoPrint actual tool0  |         |                                                              |
+| temp')                         |         |                                                              |
+| sensor.octoprint_current_state | unavail | packages/external/unavailable_entities.yaml:64               |
+| ('OctoPrint Current State')    |         |                                                              |
+| sensor.octoprint_estimated_fin | unavail | packages/external/unavailable_entities.yaml:65               |
+| ish_time ('OctoPrint Estimated |         |                                                              |
+| Finish Time')                  |         |                                                              |
+| sensor.octoprint_job_percentag | unavail | packages/external/unavailable_entities.yaml:66               |
+| e ('OctoPrint Job Percentage') |         |                                                              |
+| sensor.octoprint_start_time    | unavail | packages/external/unavailable_entities.yaml:67               |
+| ('OctoPrint Start Time')       |         |                                                              |
+| sensor.octoprint_target_bed_te | unavail | packages/external/unavailable_entities.yaml:68               |
+| mp ('OctoPrint target bed      |         |                                                              |
+| temp')                         |         |                                                              |
+| sensor.octoprint_target_tool0_ | unavail | packages/external/unavailable_entities.yaml:69               |
+| temp ('OctoPrint target tool0  |         |                                                              |
+| temp')                         |         |                                                              |
+| sensor.octoprint_time_elapsed  | missing | packages/external/unavailable_entities.yaml:70               |
+| sensor.octoprint_time_remainin | missing | packages/external/unavailable_entities.yaml:71               |
+| g                              |         |                                                              |
+| script.execute                 | missing | esphome/rf_bridge.yaml:67,160                                |
+| binary_sensor.template         | missing | esphome/domofon.yaml:35,425,429                              |
+| switch.is_on                   | missing | esphome/domofon.yaml:85,90,95,122,127,132,379,385            |
+| switch.is_off                  | missing | esphome/domofon.yaml:101,102,103,115,116,117                 |
+| binary_sensor.is_on            | missing | esphome/domofon.yaml:244,373,396                             |
+| binary_sensor.is_off           | missing | esphome/domofon.yaml:423                                     |
+| media_player.kd_55xf8505_2     | unavail | .storage/lovelace.rooms_info:49                              |
+| ('Sony TV DLNA')               |         |                                                              |
+| script.clean_living_room       | missing | .storage/lovelace.rooms_info:154                             |
+| script.clean_bedroom           | missing | .storage/lovelace.rooms_info:159                             |
+| script.clean_working_room      | missing | .storage/lovelace.rooms_info:164                             |
+| script.clean_kitchen           | missing | .storage/lovelace.rooms_info:169                             |
+| sensor.deebot_time             | missing | .storage/lovelace.rooms_info:207                             |
+| binary_sensor.deebot_mop_attac | missing | .storage/lovelace.rooms_info:222                             |
+| hed                            |         |                                                              |
+| sensor.deebot_water_level      | missing | .storage/lovelace.rooms_info:226                             |
+| sensor.octoprint               | missing | .storage/lovelace.rooms_info:324,1188                        |
+| sensor.office_temperature      | unavail | .storage/lovelace.rooms_info:347                             |
+| ('Office Temperature')         |         |                                                              |
+| sensor.office_humidity         | unavail | .storage/lovelace.rooms_info:367                             |
+| ('Office Humidity')            |         |                                                              |
+| select.setup_shade ('Setup     | unavail | .storage/lovelace.rooms_info:492                             |
+| Shade')                        |         |                                                              |
+| button.kitchen_shades_setup_bu | unavail | .storage/lovelace.rooms_info:495                             |
+| tton ('Kitchen Shades Setup    |         |                                                              |
+| Button')                       |         |                                                              |
+| sensor.hood_humidity           | missing | .storage/lovelace.rooms_info:579                             |
+| sensor.kitchen_hood_temperatur | unavail | .storage/lovelace.rooms_info:596                             |
+| e ('Kitchen Hood Temperature') |         |                                                              |
+| sensor.kitchen_hood_humidity   | unavail | .storage/lovelace.rooms_info:621                             |
+| ('Kitchen Hood Humidity')      |         |                                                              |
+| switch.toilet_plug             | missing | .storage/lovelace.rooms_info:721,1122                        |
+| binary_sensor.domofon_button   | missing | .storage/lovelace.rooms_info:779                             |
+| switch.domofon_automatically_o | missing | .storage/lovelace.rooms_info:785                             |
+| pen                            |         |                                                              |
+| switch.domofon_automatically_o | missing | .storage/lovelace.rooms_info:788                             |
+| pen_once                       |         |                                                              |
+| switch.domofon_automatically_r | missing | .storage/lovelace.rooms_info:791                             |
+| eject                          |         |                                                              |
+| binary_sensor.safety           | missing | .storage/lovelace.rooms_info:1041                            |
+| button.domofon_open ('Domofon  | unknown | .storage/lovelace.rooms_info:1057,1062                       |
+| Open')                         |         |                                                              |
+| group.batteries ('Batteries')  | unknown | .storage/lovelace:58                                         |
+| script.clean_office            | missing | .storage/lovelace:535                                        |
+| input_select.type              | missing | .storage/lovelace:716                                        |
+| script.clean_corridor          | missing | .storage/lovelace:742                                        |
+| sensor.office_pressure         | unavail | .storage/lovelace:1193                                       |
+| ('Office Pressure')            |         |                                                              |
+| sensor.u_s_air_pollution_level | missing | .storage/lovelace:1215                                       |
+| sensor.u_s_air_quality_index   | missing | .storage/lovelace:1216                                       |
+| sensor.u_s_main_pollutant      | missing | .storage/lovelace:1217                                       |
+| sensor.plex_nuc ('Plex (nuc)') | unavail | .storage/lovelace:1346                                       |
+| sensor.energy_used_monthly     | missing | .storage/lovelace:1465                                       |
+| sensor.gas_usage               | missing | .storage/lovelace:1484                                       |
+| sensor.gas_usage_total         | missing | .storage/lovelace:1487                                       |
+| binary_sensor.test_bs          | missing | .storage/lovelace:1490                                       |
+| number.template_number         | missing | .storage/lovelace:1493                                       |
+| button.mikrotik_script_reboot_ | unknown | .storage/lovelace:1967                                       |
+| router ('Mikrotik script       |         |                                                              |
+| reboot_router')                |         |                                                              |
++--------------------------------+---------+--------------------------------------------------------------+
+
+-== Report created on 20 May 2022 12:33:30
+-== Parsed 51 files in 0.45s., ignored 0 files 
+-== Generated in: 0.03s. Validated in: 0.00s.

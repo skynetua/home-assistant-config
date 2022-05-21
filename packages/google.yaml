@@ -1,13 +1,14 @@
-# Calendar
+# https://www.home-assistant.io/integrations/google_calendar/
 google:
   client_id: !secret google_client_id
   client_secret: !secret google_secret
 
-# Google Assistant
+# https://www.home-assistant.io/integrations/google_assistant/
 google_assistant:
   project_id: !secret google_project_id
   service_account: !include google.json
   report_state: true
+  secure_devices_pin: !secret secure_pin
   exposed_domains:
     - light
   entity_config:

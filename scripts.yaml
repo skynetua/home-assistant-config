@@ -1,10 +1,10 @@
 update_plants_timer:
   alias: Plants watering timer refresh
   sequence:
-    - service: input_datetime.set_datetime
-      data_template:
-        entity_id: input_datetime.plants_watering
-        datetime: '{{ now().strftime("%Y-%m-%d %H:%M:%S") }}'
+  - service: input_datetime.set_datetime
+    data_template:
+      entity_id: input_datetime.plants_watering
+      datetime: '{{ now().strftime("%Y-%m-%d %H:%M:%S") }}'
   mode: single
 cleaning:
   alias: Start cleaning
@@ -16,29 +16,30 @@ cleaning:
       description: Romms number
     cleanings:
       description: Cleanings number
+      default: 1
   sequence:
-    - data:
-        params:
-          cleanings: "{{ cleanings }}"
-          rooms: "{{ rooms }}"
-        entity_id: vacuum.deebot
-        command: spot_area
-      service: vacuum.send_command
+  - data:
+      params:
+        rooms: '{{ rooms }}'
+        cleanings: '{{ cleanings }}'
+      entity_id: vacuum.deebot
+      command: spot_area
+    service: vacuum.send_command
 reconnect_wan:
   sequence:
-    - type: turn_off
-      device_id: 8405f4ca1bbfa10ce34ba47b4a91812b
-      entity_id: switch.mikrotik_port_ether1
-      domain: switch
-    - delay:
-        hours: 0
-        minutes: 0
-        seconds: 2
-        milliseconds: 0
-    - type: turn_on
-      device_id: 8405f4ca1bbfa10ce34ba47b4a91812b
-      entity_id: switch.mikrotik_port_ether1
-      domain: switch
+  - type: turn_off
+    device_id: 8405f4ca1bbfa10ce34ba47b4a91812b
+    entity_id: switch.mikrotik_port_ether1
+    domain: switch
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
+  - type: turn_on
+    device_id: 8405f4ca1bbfa10ce34ba47b4a91812b
+    entity_id: switch.mikrotik_port_ether1
+    domain: switch
   mode: single
   alias: Reconnect WAN
   icon: mdi:wan
@@ -51,12 +52,12 @@ notify:
     title:
       description: Notification title
   sequence:
-    - condition: state
-      entity_id: binary_sensor.internet_connection
-      state: "off"
-    - service: notify.mobile_app_sm_g9860
-      data:
-        message: "{{ message }}"
-        title: "{{ title }}"
+  - condition: state
+    entity_id: binary_sensor.internet_connection
+    state: 'off'
+  - service: notify.mobile_app_sm_g9860
+    data:
+      message: '{{ message }}'
+      title: '{{ title }}'
   mode: single
   icon: mdi:message-processing-outline

@@ -5,5 +5,5 @@ shell_command:
 binary_sensor:
   - platform: command_line
     name: Push to github failed
-    command: "/bin/grep error /config/packages/shell_scripts/git.log  > /dev/null && (echo ON) || (echo OFF)"
+    command: "/bin/grep error /config/packages/shell_scripts/git.log > /dev/null && (echo ON) || (echo OFF)"
     device_class: problem

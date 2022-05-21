@@ -373,8 +373,12 @@
   trigger:
   - platform: numeric_state
     entity_id: sensor.nuc_used_percent
-    above: '95'
-    for: 00:01:00
+    above: '90'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
   condition: []
   action:
   - service: notify.mobile_app_sm_g9860
