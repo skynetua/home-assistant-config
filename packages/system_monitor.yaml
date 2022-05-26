@@ -1,7 +1,4 @@
 sensor:
-  - platform: time_date
-    display_options:
-      - "date_time"
   - platform: systemmonitor
     resources:
       - type: processor_use

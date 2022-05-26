@@ -1,8 +1,3 @@
-# https://www.home-assistant.io/integrations/google_calendar/
-google:
-  client_id: !secret google_client_id
-  client_secret: !secret google_secret
-
 # https://www.home-assistant.io/integrations/google_assistant/
 google_assistant:
   project_id: !secret google_project_id
@@ -20,7 +15,7 @@ google_assistant:
       aliases:
         - "телевизор в гостиной"
         - "TV"
-    media_player.samsung_tv:
+    media_player.tv_samsung_led22:
       name: Bedroom TV
       room: Спальня
     switch.pc:
