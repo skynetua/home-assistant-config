@@ -39,3 +39,6 @@ script:
           media_content_type: video
     mode: single
     icon: "mdi:twitch"
+
+media_extractor:
+  default_query: best

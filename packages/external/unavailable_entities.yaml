@@ -45,30 +45,6 @@ template:
 
 #REQUIRED - Add any entities you do not with to monitor in this group.
 #IMPORTANT - This group MUST exist even if empty for sensor template to render.
-group:
-  ignored_entities:
-    entities:
-      - binary_sensor.updater # always unknown after restart
-      - switch.mikrotik_nat_upnp_192_168_88_200_plex_media_server
-      - switch.mikrotik_nat_upnp_192_168_88_200_torrserver
-      - switch.mikrotik_nat_upnp_192_168_88_200_torrserver_2
-      - switch.mikrotik_nat_upnp_192_168_88_219_acestream_port_8621_to_8621_21eebb
-      - switch.mikrotik_nat_upnp_192_168_88_220_acestream_port_8621_8622
-      - switch.mikrotik_nat_upnp_192_168_88_220_add_by_homecloud
-      - media_player.plex_plex_for_android_tv_bravia_4k_gb_atv3
-      - media_player.samsung_tv_dmr
-      - binary_sensor.octoprint_printing
-      - binary_sensor.octoprint_printing_error
-      - sensor.octoprint_actual_bed_temp
-      - sensor.octoprint_actual_tool0_temp
-      - sensor.octoprint_current_state
-      - sensor.octoprint_estimated_finish_time
-      - sensor.octoprint_job_percentage
-      - sensor.octoprint_start_time
-      - sensor.octoprint_target_bed_temp
-      - sensor.octoprint_target_tool0_temp
-      - sensor.octoprint_time_elapsed
-      - sensor.octoprint_time_remaining
 
 # OPTIONAL Example automation to demonstrate how you can utilize this sensor
 automation:
@@ -95,3 +71,27 @@ automation:
               title: "Unavailable Entities"
               message: "- {{ expand(state_attr('sensor.unavailable_entities','entities'))|map(attribute='entity_id')|join('\n- ') }}"
               notification_id: unavailable_entities
+
+group:
+  ignored_entities:
+    entities:
+      - switch.mikrotik_nat_upnp_192_168_88_200_plex_media_server
+      - switch.mikrotik_nat_upnp_192_168_88_200_torrserver
+      - switch.mikrotik_nat_upnp_192_168_88_200_torrserver_2
+      - switch.mikrotik_nat_upnp_192_168_88_219_acestream_port_8621_to_8621_21eebb
+      - switch.mikrotik_nat_upnp_192_168_88_220_acestream_port_8621_8622
+      - switch.mikrotik_nat_upnp_192_168_88_220_add_by_homecloud
+      - media_player.plex_plex_for_android_tv_bravia_4k_gb_atv3
+      - media_player.samsung_tv_dmr
+      - binary_sensor.octoprint_printing
+      - binary_sensor.octoprint_printing_error
+      - sensor.octoprint_actual_bed_temp
+      - sensor.octoprint_actual_tool0_temp
+      - sensor.octoprint_current_state
+      - sensor.octoprint_estimated_finish_time
+      - sensor.octoprint_job_percentage
+      - sensor.octoprint_start_time
+      - sensor.octoprint_target_bed_temp
+      - sensor.octoprint_target_tool0_temp
+      - sensor.octoprint_time_elapsed
+      - sensor.octoprint_time_remaining

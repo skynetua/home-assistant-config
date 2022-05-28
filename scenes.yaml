@@ -44,8 +44,6 @@
       state: "off"
     light.office_desk_light:
       state: "off"
-    media_player.googlehome3251:
-      state: "off"
     media_player.sony_bravia_tv:
       state: "off"
     switch.pc:

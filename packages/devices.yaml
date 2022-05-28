@@ -41,12 +41,6 @@ shell_command:
   turn_off_pc: ssh -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no 'Home Assistant'@192.168.88.220 shutdown /s
 
 media_player:
-  - platform: samsungtv_encrypted
-    name: Bedroom TV
-    host: !secret ip_samsung_tv
-    token: a42b9e8bb3cf230e0a1b52a5fab444a9
-    sessionid: 1
-    port: 8080
   - platform: lg_soundbar
     host: !secret ip_soundbar
     port: 9741

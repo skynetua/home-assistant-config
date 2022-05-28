@@ -7,6 +7,7 @@ recorder:
       - binary_sensor
       - climate
       - cover
+      - device_tracker
       - input_boolean
       - input_text
       - light
@@ -18,10 +19,10 @@ recorder:
       - update
     entities:
       - alarm_control_panel.alarmo
-      - device_tracker.sm_g9860
       - group.safety
     entity_globs: {}
   exclude:
     entities:
-      - sensor.home_assistant_v2_db
-      - sensor.date_time
+      - sensor.nuc_uptime
+    entity_globs:
+      - sensor.home_assistant_v2_db_*
