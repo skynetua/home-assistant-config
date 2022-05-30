@@ -682,6 +682,7 @@
       - service: automation.toggle
         target:
           entity_id: automation.light_toilet
+        data: {}
     default: []
   mode: single
 - id: '1640355945570'
@@ -753,6 +754,9 @@
     entity_id: alarm_control_panel.alarmo
     type: arming
     id: arming
+  - platform: tag
+    tag_id: 9f6c5b4b-8043-4039-bf94-9137afcde918
+    id: disarm
   condition: []
   action:
   - choose:
@@ -794,5 +798,13 @@
           entity_id:
           - light.livingroom_tv
           - light.wled
+    - conditions:
+      - condition: trigger
+        id: disarm
+      sequence:
+      - device_id: d086754273f9ac4fe74073de26ecd1db
+        domain: alarm_control_panel
+        entity_id: alarm_control_panel.alarmo
+        type: disarm
     default: []
-  mode: single
+  mode: queued
