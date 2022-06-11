@@ -808,3 +808,16 @@
         type: disarm
     default: []
   mode: queued
+- id: '1654622464571'
+  alias: Send ip
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.publicip
+  condition: []
+  action:
+  - service: notify.telegram
+    data:
+      message: '{{ states.sensor.publicip.state }}'
+  mode: single
