@@ -1,4 +1,3 @@
-.archive
 .storage
 .ssh
 custom_components
@@ -10,6 +9,5 @@ www
 secrets.yaml
 zigbee.db
 home-assistant_v2.db*
-home-assistant.log*
-.google.token
-*.log
+*.log*
+watchman_report.txt
