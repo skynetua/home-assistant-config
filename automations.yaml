@@ -313,9 +313,9 @@
   trigger:
   - platform: state
     entity_id: switch.pc
+    id: 'on'
     from: 'off'
     to: 'on'
-    id: 'on'
   - platform: state
     entity_id: switch.livingroom_pc_wol
     id: 'off'
@@ -328,6 +328,22 @@
       - condition: trigger
         id: 'on'
       sequence:
+      - if:
+        - condition: device
+          device_id: 745d26659dbaf63767790c478ea6288d
+          domain: media_player
+          entity_id: media_player.sony_bravia_tv
+          type: is_off
+        then:
+        - type: turn_on
+          device_id: 745d26659dbaf63767790c478ea6288d
+          entity_id: remote.sony_bravia_tv
+          domain: remote
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 5
+            milliseconds: 0
       - service: media_player.select_source
         target:
           device_id: 745d26659dbaf63767790c478ea6288d
@@ -366,7 +382,7 @@
         entity_id: switch.plug_livingroom_on_off
         domain: switch
     default: []
-  mode: restart
+  mode: single
 - id: '1615888678577'
   alias: Alert - Unsufficient space on Nuc drive
   description: ''
