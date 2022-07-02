@@ -61,3 +61,37 @@ notify:
       title: '{{ title }}'
   mode: single
   icon: mdi:message-processing-outline
+play_radio:
+  alias: Play radio
+  sequence:
+  - if:
+    - condition: device
+      device_id: a3af181ce3e9d1acb3dffaad60232da3
+      domain: media_player
+      entity_id: media_player.kitchen_speaker
+      type: is_playing
+    then:
+    - service: media_player.media_stop
+      data: {}
+      target:
+        entity_id: media_player.kitchen_speaker
+    else:
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.kitchen_speaker
+      data:
+        media_content_id: media-source://radio_browser/8366306d-147c-4618-804e-355288ec90c7
+        media_content_type: audio/mpeg
+      metadata:
+        title: Українське радіо. Поділля-Центр. (128 кбіт/с)
+        thumbnail: ''
+        media_class: music
+        children_media_class:
+        navigateIds:
+        - {}
+        - media_content_type: app
+          media_content_id: media-source://radio_browser
+        - media_content_type: music
+          media_content_id: media-source://radio_browser/country/UA
+  mode: restart
+  icon: mdi:radio

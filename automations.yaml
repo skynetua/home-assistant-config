@@ -69,37 +69,6 @@
           - media_player.kitchen_speaker
     default: []
   mode: single
-- id: '1613122603515'
-  alias: Alert - On water leak
-  description: ''
-  trigger:
-  - type: moist
-    platform: device
-    device_id: 1bd59533a9207101396e64f68d27b3cd
-    entity_id: binary_sensor.wleak_toilet
-    domain: binary_sensor
-  - type: moist
-    platform: device
-    device_id: b76fdd9ceb5a5353b4402f0207c2ddfa
-    entity_id: binary_sensor.wleak_kitchen
-    domain: binary_sensor
-  condition: []
-  action:
-  - service: notify.mobile_app_sm_g9860
-    data:
-      title: ⚠️ Внимание!
-      message: 💧 Water leak detected! {{ trigger.to_state.attributes.friendly_name
-        }}
-      data:
-        channel: Alerts
-        importance: max
-        color: red
-  - service: notify.telegram
-    data:
-      title: ⚠️ Warning!
-      message: 💧 Water leak detected! {{ trigger.to_state.attributes.friendly_name
-        }}
-  mode: single
 - id: '1613122825694'
   alias: Light - Tambur
   description: ''
@@ -214,10 +183,10 @@
   action:
   - service: notify.announce
     data:
-      message: "Hey!   {% if (trigger.to_state.attributes.pronunciation != Null) -%}\n\
-        \  {{ trigger.to_state.attributes.pronunciation }} \n{%- else -%}\n  {{ trigger.to_state.attributes.friendly_name\
-        \ }}\n{%- endif %}  has started streaming {{ trigger.to_state.attributes.game\
-        \ }} on twitch tv"
+      message: "Hey!   {% if (trigger.to_state.attributes.pronunciation != Null) -%}\n
+        \ {{ trigger.to_state.attributes.pronunciation }} \n{%- else -%}\n  {{ trigger.to_state.attributes.friendly_name
+        }}\n{%- endif %}  has started streaming {{ trigger.to_state.attributes.game
+        }} on twitch tv"
   mode: single
 - id: '1613124857885'
   alias: Notification - Utility Meters Reminder
@@ -236,7 +205,7 @@
       sequence:
       - service: notify.telegram
         data:
-          title: 🔥 Utility Meters Reminder
+          title: "\U0001F525 Utility Meters Reminder"
           message: Do not forget to report Gas meter value - {{ states('sensor.total_used_gas')
             }}
     - conditions:
@@ -245,7 +214,7 @@
       sequence:
       - service: notify.telegram
         data:
-          title: 💧 Utility Meters Reminder
+          title: "\U0001F4A7 Utility Meters Reminder"
           message: Do not forget to report Water meters value
     default: []
   mode: single
@@ -339,26 +308,33 @@
           device_id: 745d26659dbaf63767790c478ea6288d
           entity_id: remote.sony_bravia_tv
           domain: remote
-        - delay:
-            hours: 0
-            minutes: 0
-            seconds: 5
-            milliseconds: 0
+        - wait_for_trigger:
+          - platform: device
+            device_id: 745d26659dbaf63767790c478ea6288d
+            domain: media_player
+            entity_id: media_player.sony_bravia_tv
+            type: turned_on
+            for:
+              hours: 0
+              minutes: 0
+              seconds: 30
       - service: media_player.select_source
         target:
           device_id: 745d26659dbaf63767790c478ea6288d
         data:
           source: HDMI 3/ARC
       - service: media_player.select_source
-        target:
-          entity_id: media_player.unnamed_device
         data:
           source: HDMI
-      - service: media_player.select_sound_mode
         target:
-          entity_id: media_player.unnamed_device
+          entity_id:
+          - media_player.lg_soundbar_4d27e0b6_59a5_46fc_b94e_372f35e6eb81
+      - service: media_player.select_sound_mode
         data:
           sound_mode: Standard
+        target:
+          entity_id:
+          - media_player.lg_soundbar_4d27e0b6_59a5_46fc_b94e_372f35e6eb81
     - conditions:
       - condition: trigger
         id: 'off'
@@ -367,7 +343,8 @@
         data:
           source: Optical/HDMI ARC
         target:
-          entity_id: media_player.unnamed_device
+          entity_id:
+          - media_player.lg_soundbar_4d27e0b6_59a5_46fc_b94e_372f35e6eb81
       - wait_for_trigger:
         - type: power
           platform: device
@@ -482,7 +459,7 @@
       message: 'Host: {{state_attr(entity,''host_name'')}} Ip: {{state_attr(entity,''ip'')}}
 
         '
-      title: 📱 New device connected to Wi-Fi network!
+      title: "\U0001F4F1 New device connected to Wi-Fi network!"
   mode: queued
   max: 10
 - id: '1628081966719'

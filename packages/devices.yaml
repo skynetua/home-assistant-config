@@ -40,17 +40,9 @@ shell_command:
   turn_off_pcu: ssh -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no hass@192.168.88.221 sudo poweroff
   turn_off_pc: ssh -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no 'Home Assistant'@192.168.88.220 shutdown /s
 
-media_player:
-  - platform: lg_soundbar
-    host: !secret ip_soundbar
-    port: 9741
-
 homeassistant:
   customize:
     switch.office_pc:
       icon: mdi:desktop-classic
     switch.pc:
       icon: mdi:desktop-tower
-    media_player.unnamed_device:
-      icon: mdi:soundbar
-      name: Soundbar
