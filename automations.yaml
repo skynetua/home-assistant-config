@@ -323,12 +323,15 @@
           device_id: 745d26659dbaf63767790c478ea6288d
         data:
           source: HDMI 3/ARC
-      - service: media_player.select_source
-        data:
-          source: HDMI
-        target:
-          entity_id:
-          - media_player.lg_soundbar_4d27e0b6_59a5_46fc_b94e_372f35e6eb81
+      - repeat:
+          count: 2
+          sequence:
+          - service: media_player.select_source
+            data:
+              source: HDMI
+            target:
+              entity_id:
+              - media_player.lg_soundbar_4d27e0b6_59a5_46fc_b94e_372f35e6eb81
       - service: media_player.select_sound_mode
         data:
           sound_mode: Standard
@@ -359,7 +362,7 @@
         entity_id: switch.plug_livingroom_on_off
         domain: switch
     default: []
-  mode: single
+  mode: restart
 - id: '1615888678577'
   alias: Alert - Unsufficient space on Nuc drive
   description: ''
@@ -763,3 +766,44 @@
     data:
       message: '{{ states.sensor.publicip.state }}'
   mode: single
+- id: '1657138273474'
+  alias: Light - Bedroom
+  description: ''
+  trigger:
+  - platform: device
+    type: turned_on
+    device_id: 5989dacae735a89e727cb741694f36ac
+    entity_id: light.light_bedroom_main
+    domain: light
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+  - platform: device
+    type: turned_on
+    device_id: 5989dacae735a89e727cb741694f36ac
+    entity_id: light.light_bedroom_spotlight
+    domain: light
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: input_boolean.mode_guests
+    state: 'off'
+  - type: is_no_motion
+    condition: device
+    device_id: d200b3ca3a4c78c0c78a317b8fa18051
+    entity_id: binary_sensor.ble_motion_nightlight
+    domain: binary_sensor
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      device_id: 5989dacae735a89e727cb741694f36ac
+  mode: restart
