@@ -30,6 +30,18 @@
     entity_id: sensor.sm_g9860_phone_state
     to: idle
     id: idle
+  - platform: state
+    entity_id:
+    - sensor.sm_g9860_audio_mode
+    from: normal
+    to: ringing
+    id: in_call
+  - platform: state
+    entity_id:
+    - sensor.sm_g9860_audio_mode
+    to: normal
+    from: in_call
+    id: idle
   condition:
   - condition: state
     entity_id: person.oleksandr
@@ -46,6 +58,7 @@
           - media_player.kitchen_speaker
           - media_player.sony_bravia_tv
           - media_player.soundbar
+        data: {}
       - service: media_player.volume_mute
         data:
           is_volume_muted: true
@@ -67,6 +80,7 @@
           - media_player.sony_bravia_tv
           - media_player.soundbar
           - media_player.kitchen_speaker
+        data: {}
     default: []
   mode: single
 - id: '1613122825694'
